@@ -21,7 +21,7 @@ def login():
             login_user(user)
             user.update_last_login()
             next_page = request.args.get('next')
-            flash('Successfully logged in!', 'success')
+            flash('Successfully logged in!', 'success-quiet')
             # Redirect to meal recording page by default
             return redirect(next_page or url_for('meal.record_meal'))
         flash('Invalid email or password', 'error')
@@ -56,5 +56,5 @@ def logout():
     logout_user()
     # Clear Flask session data
     session.clear()
-    flash('Successfully logged out!', 'success')
+    flash('Successfully logged out!', 'success-quiet')
     return redirect(url_for('main.index'))

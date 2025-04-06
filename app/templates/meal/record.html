@@ -6,12 +6,12 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">Record Your Meal</h4>
+                    <h4 class="mb-0">Record Your Macros</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('meal.record_meal') }}" id="mealForm">
                         <div class="mb-3">
-                            <label for="meal_text" class="form-label">What did you eat?</label>
+                            <label for="meal_text" class="form-label">What did you eat today?</label>
                             <textarea class="form-control" id="meal_text" name="meal_text" rows="3" 
                                     placeholder="Example: I ate 250 grams of grilled chicken breast" 
                                     required>{{ meal_text }}</textarea>
@@ -34,36 +34,82 @@
             {% if parsed_data %}
             <div class="card mt-4">
                 <div class="card-header">
-                    <h5 class="mb-0">Parsed Data</h5>
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="parsed-tab" data-bs-toggle="tab" href="#parsed" role="tab">Parsed Data</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="nutrition-tab" data-bs-toggle="tab" href="#nutrition" role="tab">Unit Nutrition</a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr><th>Food Name</th><td>{{ parsed_data.food_name }}</td></tr>
-                        <tr><th>Quantity</th><td>{{ parsed_data.quantity }}</td></tr>
-                        <tr><th>Unit</th><td>{{ parsed_data.unit }}</td></tr>
-                        <tr><th>Measurement Type</th><td>{{ parsed_data.measurement_type }}</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Unit Nutrition Data</h5>
-                </div>
-                <div class="card-body">
-                    <form method="get" action="{{ url_for('meal.record_meal') }}">
-                        <table class="table table-bordered">
-                            <tr><th>Calories</th><td><input type="text" name="calories" class="form-control" value="{{ unit_nutrition_data.calories }}"></td></tr>
-                            <tr><th>Protein</th><td><input type="text" name="protein" class="form-control" value="{{ unit_nutrition_data.protein }}"></td></tr>
-                            <tr><th>Fat</th><td><input type="text" name="fat" class="form-control" value="{{ unit_nutrition_data.fat }}"></td></tr>
-                            <tr><th>Carbs</th><td><input type="text" name="carbs" class="form-control" value="{{ unit_nutrition_data.carbs }}"></td></tr>
-                            <tr><th>Base Quantity</th><td><input type="text" name="base_quantity" class="form-control" value="{{ unit_nutrition_data.base_quantity }}"></td></tr>
-                            <tr><th>Base Unit</th><td><input type="text" name="base_unit" class="form-control" value="{{ unit_nutrition_data.base_unit }}"></td></tr>
-                        </table>
-                        <input type="hidden" name="parsed_data" value='{{ parsed_data | tojson | safe }}'>
-                        <input type="hidden" name="meal_text" value="{{ meal_text }}">
-                        <button type="submit" name="calculate" class="btn btn-primary">Recalculate</button>
-                    </form>
+                    <div class="tab-content">
+                        <!-- Parsed Data Tab -->
+                        <div class="tab-pane fade show active" id="parsed" role="tabpanel">
+                            <div class="container-fluid px-0">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr><th>Food Name</th><td>{{ parsed_data.food_name }}</td></tr>
+                                            <tr><th>Quantity</th><td>{{ parsed_data.quantity }}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr><th>Unit</th><td>{{ parsed_data.unit }}</td></tr>
+                                            <tr><th>Measurement Type</th><td>{{ parsed_data.measurement_type }}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Unit Nutrition Data Tab -->
+                        <div class="tab-pane fade" id="nutrition" role="tabpanel">
+                            <form method="get" action="{{ url_for('meal.record_meal') }}">
+                                <div class="container-fluid px-0">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Calories</th>
+                                                    <td><input type="text" name="calories" class="form-control" value="{{ unit_nutrition_data.calories }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Protein</th>
+                                                    <td><input type="text" name="protein" class="form-control" value="{{ unit_nutrition_data.protein }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fat</th>
+                                                    <td><input type="text" name="fat" class="form-control" value="{{ unit_nutrition_data.fat }}"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Carbs</th>
+                                                    <td><input type="text" name="carbs" class="form-control" value="{{ unit_nutrition_data.carbs }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Base Quantity</th>
+                                                    <td><input type="text" name="base_quantity" class="form-control" value="{{ unit_nutrition_data.base_quantity }}" readonly></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Base Unit</th>
+                                                    <td><input type="text" name="base_unit" class="form-control" value="{{ unit_nutrition_data.base_unit }}" readonly></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="parsed_data" value='{{ parsed_data | tojson | safe }}'>
+                                <input type="hidden" name="meal_text" value="{{ meal_text }}">
+                                <button type="submit" name="calculate" class="btn btn-primary">Recalculate</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -72,12 +118,22 @@
                     <h5 class="mb-0">Scaled Nutrition Data</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <tr><th>Calories</th><td>{{ scaled_nutrition_data.calories }}</td></tr>
-                        <tr><th>Protein</th><td>{{ scaled_nutrition_data.protein }}</td></tr>
-                        <tr><th>Fat</th><td>{{ scaled_nutrition_data.fat }}</td></tr>
-                        <tr><th>Carbs</th><td>{{ scaled_nutrition_data.carbs }}</td></tr>
-                    </table>
+                    <div class="container-fluid px-0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tr><th>Calories</th><td>{{ scaled_nutrition_data.calories }}</td></tr>
+                                    <tr><th>Protein</th><td>{{ scaled_nutrition_data.protein }}</td></tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tr><th>Fat</th><td>{{ scaled_nutrition_data.fat }}</td></tr>
+                                    <tr><th>Carbs</th><td>{{ scaled_nutrition_data.carbs }}</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-flex gap-2">
                         <form method="get" action="{{ url_for('meal.record_meal') }}">
                             <!-- Hidden inputs for unit values -->
@@ -117,6 +173,27 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: #4361ee;
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: #adb5bd !important;
+    opacity: 0.7 !important;
+}
+
+:-ms-input-placeholder {
+    color: #adb5bd !important;
+    opacity: 0.7 !important;
+}
+
+::-ms-input-placeholder {
+    color: #adb5bd !important;
+    opacity: 0.7 !important;
+}
+
+/* Form text helper styling */
+.form-text {
+    color: #6c757d;
 }
 </style>
 

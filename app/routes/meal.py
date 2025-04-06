@@ -12,10 +12,11 @@ from chromadb.config import Settings
 bp = Blueprint('meal', __name__)
 
 # Initialize OpenAI API key
-# openai.api_key = os.getenv('OPENAI_API_KEY')
+
 print("Openai version:", openai.__version__)
 print("Chromadb version:", chromadb.__version__)
-
+print("Flask Environment:", os.getenv('FLASK_ENV'))
+print("ChromaDB Path:", os.getenv('CHROMADB_PATH'))
 client = openai.OpenAI(
   api_key=os.getenv('OPENAI_API_KEY')
 )
@@ -37,6 +38,7 @@ def parse_meal_text(meal_text):
     2. Quantity (e.g., '250')
     3. Unit type (e.g., 'gram' or 'piece')
     4. Measurement type ('weight' or 'count')
+    The quantity could be in words, for example two for 2 or three for 3.
     
     Text: "{meal_text}"
     
@@ -109,14 +111,14 @@ def get_nutrition_info(food_name, quantity, unit, measurement_type):
 
             if (results and results['documents'] and len(results['documents']) > 0):
                 distance = float(results['distances'][0][0])
-                print(f"Similarity distance: {distance}")
+                print(f"\nSimilarity distance: {distance}")
                 
                 if distance < 0.5:
                     unit_nutrition_data = json.loads(results['documents'][0][0])
-                    print("Found similar match in ChromaDB:", unit_nutrition_data)
+                    print("\nFound similar match in ChromaDB:", unit_nutrition_data)
                     return unit_nutrition_data
                 else:
-                    print(f"Distance {distance} exceeds threshold 0.5")
+                    print(f"\tDistance {distance} exceeds threshold 0.5")
             
         except Exception as e:
             print(f"Similarity search failed: {e}")
@@ -195,8 +197,8 @@ def get_nutrition_info(food_name, quantity, unit, measurement_type):
             raw_content = raw_content.strip("```").strip("json").strip()
             # print("Raw content after stripping:", raw_content)
         unit_nutrition_data = json.loads(raw_content)
-        
-        print("Unit Nutrition data fetched from OpenAI:\n", unit_nutrition_data)
+        print("-"*50)
+        print("Unit Nutrition data fetched from OpenAI:\n", unit_nutrition_data, "\n")
 
         
         return unit_nutrition_data
@@ -326,8 +328,9 @@ def record_meal():
             
             # Add debug print
             print("-"*50)
-            print(f"Attempting to save to ChromaDB unit_nutrition_data:\n {unit_nutrition_data}")
-            print(f"Attempting to save to ChromaDB:\n {json_nutrition_data}")
+            print(f"Attempting to save to ChromaDB unit_nutrition_data...")
+            print(f"{unit_nutrition_data}")
+            print(f"{json_nutrition_data}")
             print("-"*50)
             # Save to ChromaDB
             # chroma_client = chromadb.Client()
@@ -338,7 +341,7 @@ def record_meal():
                 metadatas=[{"food_name": food_name}],
                 ids=[food_id]
             )
-            print(f"Successfully saved nutrition data for {food_name} (id: {food_id}) to ChromaDB")
+            print(f"Successfully saved nutrition data for {food_name} (id: {food_id}) to ChromaDB", "\n","-"*30)
             
             # Then save the meal with scaled values to the database
             meal = UserMeal(
