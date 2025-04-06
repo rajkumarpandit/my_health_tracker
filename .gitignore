@@ -42,3 +42,7 @@ data/chromadb/
 
 # Logs
 *.log
+
+# Test files
+test_*.py
+temp*.py

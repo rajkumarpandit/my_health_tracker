@@ -15,13 +15,13 @@ bp = Blueprint('meal', __name__)
 # openai.api_key = os.getenv('OPENAI_API_KEY')
 print("Openai version:", openai.__version__)
 print("Chromadb version:", chromadb.__version__)
-# print(f"OpenAI Ke {os.getenv('OPENAI_API_KEY')}")
+
 client = openai.OpenAI(
   api_key=os.getenv('OPENAI_API_KEY')
 )
 
 def get_chroma_client():
-    persist_directory = "c:/Raj/MyProjects/My_health_tracker/data/chromadb"
+    persist_directory = os.getenv('CHROMADB_PATH')
     chroma_client = chromadb.Client(Settings(
         persist_directory=persist_directory,
         is_persistent=True
