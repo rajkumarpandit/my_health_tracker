@@ -372,5 +372,6 @@ def record_meal():
 
 
 if __name__ == '__main__':
-    import openai
-    print(openai.__version__)
+    # import openai
+    # print(openai.__version__)
+    pass
