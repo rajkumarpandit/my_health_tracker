@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Health Tracker - Your Personal Nutrition Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-heartbeat text-primary"></i> My Health Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2" href="{{ url_for('auth.login') }}">Sign In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Track Your Nutrition Journey</h1>
+                    <p class="lead mb-4">Achieve your health goals with our intelligent nutrition tracking system. Simply describe what you ate, and we'll do the rest!</p>
+                    <div class="cta-buttons">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
+                        <a href="#features" class="btn btn-outline-primary btn-lg">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Health Tracking Illustration" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3>Natural Language Input</h3>
+                        <p>Simply type what you ate in plain English, and we'll handle the rest.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3>Nutrition Tracking</h3>
+                        <p>Automatically track calories, protein, carbs, and fat intake.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>Goal Setting</h3>
+                        <p>Set and track your daily nutrition goals with ease.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <h1 class="mb-4">Welcome to My Health Tracker</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Record Meal</h5>
+                        <p class="card-text">Track your daily food intake and get nutritional information.</p>
+                        <a href="#" class="btn btn-primary">Record a Meal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Set Limits</h5>
+                        <p class="card-text">Configure your daily nutritional goals and limits.</p>
+                        <a href="#" class="btn btn-primary">Set Limits</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Daily Summary</h5>
+                        <p class="card-text">View your daily nutrition summary and progress.</p>
+                        <a href="#" class="btn btn-primary">View Summary</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 My Health Tracker. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
