@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-2">  <!-- Reduced padding -->
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}">
                 <i class="fas fa-heartbeat"></i> My Health Tracker
@@ -30,15 +30,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 {% if current_user.is_authenticated %}
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('meal.record_meal') }}">Record Meal</a>
-                    </li>
-                    <!-- Add more menu items here -->
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="nav-link">Welcome, {{ current_user.username }}</span>
+                        <span class="nav-link">Welcome, {{ current_user.username|title }}</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
@@ -58,7 +52,7 @@
         </div>
     </nav>
 
-    <main class="container mt-4">
+    <div class="container-fluid" style="margin-top: 60px;">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -72,9 +66,58 @@
             {% endif %}
         {% endwith %}
         
-        {% block content %}{% endblock %}
-    </main>
+        {% block content %}
+        <div class="d-flex">
+            {% include 'shared/_sidebar.html' %}
+            
+            <!-- Main content area -->
+            <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
+                <div class="container-fluid px-0">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-4">Today's Consumption Summary</h4>
+                            
+                            <!-- Nutrition Summary Card -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Total Calories</th>
+                                                    <td>{{ "%.1f"|format(totals.calories|float) }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total Protein</th>
+                                                    <td>{{ "%.1f"|format(totals.protein|float) }}g</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Total Fat</th>
+                                                    <td>{{ "%.1f"|format(totals.fat|float) }}g</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total Carbs</th>
+                                                    <td>{{ "%.1f"|format(totals.carbs|float) }}g</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </div>
 
+    <!-- Add FontAwesome if not already present -->
+    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Flash Message Auto-Hide Script -->

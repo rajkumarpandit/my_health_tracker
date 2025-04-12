@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex">
+    {% include 'shared/_sidebar.html' %}
+    
+    <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
+        <div class="container-fluid px-0">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Daily Nutrition Targets</h4>
+                        {% if not edit_mode and targets %}
+                            <a href="{{ url_for('daily_target.daily_budget', edit='true') }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('daily_target.daily_budget') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.calories.label(class="form-label") }}
+                                    {% if edit_mode or not targets %}
+                                        {{ form.calories(class="form-control") }}
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.calories|float) }}" readonly>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.protein.label(class="form-label") }}
+                                    {% if edit_mode or not targets %}
+                                        {{ form.protein(class="form-control") }}
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.protein|float) }}" readonly>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.fat.label(class="form-label") }}
+                                    {% if edit_mode or not targets %}
+                                        {{ form.fat(class="form-control") }}
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.fat|float) }}" readonly>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.carbs.label(class="form-label") }}
+                                    {% if edit_mode or not targets %}
+                                        {{ form.carbs(class="form-control") }}
+                                    {% else %}
+                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.carbs|float) }}" readonly>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            {% if edit_mode or not targets %}
+                                {{ form.submit(class="btn btn-primary") }}
+                            {% endif %}
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Close</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

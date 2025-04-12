@@ -1,20 +1,15 @@
-from flask import Flask, flash, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask import Flask
 from .config import Config
 import os
 from dotenv import load_dotenv
+from .extensions import db, migrate, login_manager
 
 # Load environment variables
 load_dotenv()
 
-# Initialize Flask extensions
-db = SQLAlchemy()
-login_manager = LoginManager()
-
-def create_app():
+def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config_class)
 
     # Ensure the instance folder exists
     db_dir = os.path.dirname(app.config['SQLITE_DB_PATH'])
@@ -22,10 +17,10 @@ def create_app():
         os.makedirs(db_dir, exist_ok=True)
     except OSError as e:
         print(f"Error creating database directory: {e}")
-        pass
 
-    # Initialize extensions
+    # Initialize extensions with app
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
@@ -33,14 +28,14 @@ def create_app():
 
     with app.app_context():
         # Import routes
-        from .routes import auth, main, meal
+        from .routes import auth, main, meal, daily_target
+        from .routes import weight
         
         # Register blueprints
         app.register_blueprint(auth.bp)
         app.register_blueprint(main.bp)
         app.register_blueprint(meal.bp)
-        
-        # Create database tables
-        db.create_all()
+        app.register_blueprint(daily_target.bp)
+        app.register_blueprint(weight.bp)
         
         return app

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex">
+    {% include 'shared/_sidebar.html' %}
+    
+    <!-- Main content area -->
+    <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
+        <h2>Welcome, {{ current_user.username |title}}!</h2>
+    </div>
+</div>
+{% endblock %}

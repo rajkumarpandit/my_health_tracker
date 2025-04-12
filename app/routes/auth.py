@@ -22,8 +22,8 @@ def login():
             user.update_last_login()
             next_page = request.args.get('next')
             flash('Successfully logged in!', 'success-quiet')
-            # Redirect to meal recording page by default
-            return redirect(next_page or url_for('meal.record_meal'))
+            # Redirect to main dashboard page by default
+            return redirect(next_page or url_for('main.dashboard'))
         flash('Invalid email or password', 'error')
     return render_template('auth/login.html', form=form)
 

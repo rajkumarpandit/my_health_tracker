@@ -6,6 +6,7 @@ import os
 import json
 from datetime import datetime
 from app.models import db, UserMeal, FoodNutrient
+from app.models.daily_target import DailyTarget  # Add this line
 from slugify import slugify 
 from chromadb.config import Settings
 
@@ -233,6 +234,18 @@ def record_meal():
 
         # Step 3: Calculate scaled nutrition data
         factor = parsed_data['quantity'] / unit_nutrition_data['base_quantity']
+
+        # First ensure all nutrition values are either a number or 0.0
+        unit_nutrition_data = {
+            'calories': 0.0 if unit_nutrition_data.get('calories') is None else unit_nutrition_data['calories'],
+            'protein': 0.0 if unit_nutrition_data.get('protein') is None else unit_nutrition_data['protein'],
+            'fat': 0.0 if unit_nutrition_data.get('fat') is None else unit_nutrition_data['fat'],
+            'carbs': 0.0 if unit_nutrition_data.get('carbs') is None else unit_nutrition_data['carbs'],
+            'base_quantity': unit_nutrition_data['base_quantity'],
+            'base_unit': unit_nutrition_data['base_unit']
+        }
+
+        # Now scale the values
         scaled_nutrition_data = {
             'calories': unit_nutrition_data['calories'] * factor,
             'protein': unit_nutrition_data['protein'] * factor,
@@ -347,14 +360,13 @@ def record_meal():
             meal = UserMeal(
                 user_id=current_user.id,
                 food_name=request.args.get('food_name'),
-                # quantity=float(request.args.get('quantity')),
                 quantity=quantity,
                 unit=request.args.get('unit'),
                 measurement_type=request.args.get('measurement_type'),
-                calories=scaled_nutrition_data['calories'],
-                protein=scaled_nutrition_data['protein'],
-                fat=scaled_nutrition_data['fat'],
-                carbs=scaled_nutrition_data['carbs'],
+                calories=scaled_nutrition_data['calories'] or 0.0,  # Replace None with 0.0
+                protein=scaled_nutrition_data['protein'] or 0.0,    # Replace None with 0.0
+                fat=scaled_nutrition_data['fat'] or 0.0,           # Replace None with 0.0
+                carbs=scaled_nutrition_data['carbs'] or 0.0,       # Replace None with 0.0
                 date_recorded=datetime.now()
             )
             try:
@@ -372,6 +384,87 @@ def record_meal():
             print(f"Debug - unit_nutrition_data: {unit_nutrition_data}")  # unit_nutrition_data is now always defined
 
     return render_template('meal/record.html')
+
+# Add this new route below your existing record_meal route
+@bp.route('/record_meal_advanced', methods=['POST'])
+@login_required
+def record_meal_advanced():
+    try:
+        # Extract data from the form
+        food_name = request.form.get('food_name')
+        quantity = float(request.form.get('quantity'))
+        unit = request.form.get('unit')
+        calories = float(request.form.get('calories'))
+        protein = float(request.form.get('protein'))
+        fat = float(request.form.get('fat'))
+        carbs = float(request.form.get('carbs'))
+        
+        # Determine measurement type based on unit
+        if unit in ['grams', 'ml']:
+            measurement_type = 'weight'
+        else:
+            measurement_type = 'count'
+        
+        # Create and save the meal directly to the database
+        meal = UserMeal(
+            user_id=current_user.id,
+            food_name=food_name,
+            quantity=quantity,
+            unit=unit,
+            measurement_type=measurement_type,
+            calories=calories or 0.0,
+            protein=protein or 0.0,
+            fat=fat or 0.0,
+            carbs=carbs or 0.0,
+            date_recorded=datetime.now()
+        )
+        
+        db.session.add(meal)
+        db.session.commit()
+        
+        flash(f'Successfully added {food_name} to your meal log.', 'success')
+        return redirect(url_for('meal.today_consumption'))
+        
+    except ValueError as e:
+        flash('Please enter valid numeric values for all nutrition fields.', 'error')
+        return redirect(url_for('meal.record_meal'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error recording meal: {str(e)}', 'error')
+        return redirect(url_for('meal.record_meal'))
+
+@bp.route('/today_consumption')
+@login_required
+def today_consumption():
+    # Get today's date
+    today = datetime.now().date()
+    
+    # Query today's meals
+    today_meals = UserMeal.query.filter(
+        UserMeal.user_id == current_user.id,
+        db.func.date(UserMeal.date_recorded) == today
+    ).all()
+    
+    # Get user's daily targets
+    targets = DailyTarget.query.filter_by(user_id=current_user.id).first()
+    
+    # Calculate totals
+    totals = {
+        'calories': sum(meal.calories for meal in today_meals if meal.calories),
+        'protein': sum(meal.protein for meal in today_meals if meal.protein),
+        'fat': sum(meal.fat for meal in today_meals if meal.fat),
+        'carbs': sum(meal.carbs for meal in today_meals if meal.carbs)
+    }
+    
+    return render_template('meal/today_consumption.html', 
+                         totals=totals, 
+                         meals=today_meals,
+                         targets=targets if targets else {
+                             'calories': 0,
+                             'protein': 0,
+                             'fat': 0,
+                             'carbs': 0
+                         })
 
 
 if __name__ == '__main__':

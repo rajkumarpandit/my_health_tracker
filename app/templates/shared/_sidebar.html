@@ -1,0 +1,41 @@
+<div class="sidebar bg-light border-end" style="width: 250px; min-height: 100vh; position: fixed; top: 56px; left: 0;">
+    <div class="p-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'meal.record_meal' %}active{% endif %}" 
+                   href="{{ url_for('meal.record_meal') }}">
+                    <i class="fas fa-utensils me-2"></i>
+                    Record Your Macro
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'weight.record_weight' %}active{% endif %}" 
+                   href="{{ url_for('weight.record_weight') }}">
+                    <i class="fas fa-weight me-2"></i>
+                    Record Your Weight
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'meal.today_consumption' %}active{% endif %}" 
+                   href="{{ url_for('meal.today_consumption') }}">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Today's Consumption
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'daily_target.daily_budget' %}active{% endif %}" 
+                   href="{{ url_for('daily_target.daily_budget') }}">
+                    <i class="fas fa-bullseye me-2"></i>
+                    Daily Budget
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <hr class="my-3">
+                <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt me-2"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

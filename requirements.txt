@@ -8,3 +8,4 @@ python-dotenv==1.0.0
 openai==0.28.1
 chromadb==0.4.18
 numpy<2.0.0  # Required for ChromaDB compatibility
+Flask-Migrate==4.0.5
