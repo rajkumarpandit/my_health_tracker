@@ -9,6 +9,9 @@ from app.models import db, UserMeal, FoodNutrient
 from app.models.daily_target import DailyTarget  # Add this line
 from slugify import slugify 
 from chromadb.config import Settings
+from app.models.exercise import UserExercise
+from app.models.daily_target import DailyTarget
+from app.models.supplement import UserSupplement
 
 bp = Blueprint('meal', __name__)
 
@@ -433,39 +436,67 @@ def record_meal_advanced():
         flash(f'Error recording meal: {str(e)}', 'error')
         return redirect(url_for('meal.record_meal'))
 
-@bp.route('/today_consumption')
+@bp.route('/today_consumption', methods=['GET'])
 @login_required
 def today_consumption():
     # Get today's date
     today = datetime.now().date()
     
-    # Query today's meals
-    today_meals = UserMeal.query.filter(
+    # Fetch today's meals for the current user
+    meals = UserMeal.query.filter(
         UserMeal.user_id == current_user.id,
         db.func.date(UserMeal.date_recorded) == today
-    ).all()
+    ).order_by(UserMeal.date_recorded).all()
     
-    # Get user's daily targets
-    targets = DailyTarget.query.filter_by(user_id=current_user.id).first()
-    
-    # Calculate totals
+    # Calculate nutrition totals
     totals = {
-        'calories': sum(meal.calories for meal in today_meals if meal.calories),
-        'protein': sum(meal.protein for meal in today_meals if meal.protein),
-        'fat': sum(meal.fat for meal in today_meals if meal.fat),
-        'carbs': sum(meal.carbs for meal in today_meals if meal.carbs)
+        'calories': sum(meal.calories for meal in meals) if meals else 0,
+        'protein': sum(meal.protein for meal in meals) if meals else 0,
+        'carbs': sum(meal.carbs for meal in meals) if meals else 0,
+        'fat': sum(meal.fat for meal in meals) if meals else 0
     }
     
-    return render_template('meal/today_consumption.html', 
-                         totals=totals, 
-                         meals=today_meals,
-                         targets=targets if targets else {
-                             'calories': 0,
-                             'protein': 0,
-                             'fat': 0,
-                             'carbs': 0
-                         })
-
+    # Get user's daily targets
+    # from app.models.daily_target import DailyTarget
+    target = DailyTarget.query.filter_by(user_id=current_user.id).first()
+    
+    # Set default targets if none exists
+    targets = {
+        'calories': target.calories if target else 2000,
+        'protein': target.protein if target else 150,
+        'carbs': target.carbs if target else 200,
+        'fat': target.fat if target else 70
+    }
+    
+    # Get today's exercise data
+    exercise = UserExercise.query.filter_by(
+        user_id=current_user.id,
+        date_recorded=today
+    ).first()
+    
+    calories_burned = 0
+    step_count = 0
+    if exercise:
+        calories_burned = exercise.total_calories
+        step_count = exercise.step_count
+    
+    # Get today's supplements
+    # from app.models.supplement import UserSupplement
+    supplements = UserSupplement.query.filter_by(
+        user_id=current_user.id,
+        date_taken=today
+    ).order_by(UserSupplement.created_at).all()
+    
+    # Pass all necessary data to template
+    return render_template(
+        'meal/today_consumption.html', 
+        meals=meals, 
+        totals=totals,
+        targets=targets,
+        calories_burned=calories_burned,
+        supplements=supplements,
+        step_count=step_count
+    )
 
 if __name__ == '__main__':
     # import openai

@@ -30,6 +30,8 @@ def create_app(config_class=Config):
         # Import routes
         from .routes import auth, main, meal, daily_target
         from .routes import weight
+        from .routes import exercise
+        from .routes import supplement
         
         # Register blueprints
         app.register_blueprint(auth.bp)
@@ -37,5 +39,7 @@ def create_app(config_class=Config):
         app.register_blueprint(meal.bp)
         app.register_blueprint(daily_target.bp)
         app.register_blueprint(weight.bp)
+        app.register_blueprint(exercise.bp, url_prefix='/exercise')
+        app.register_blueprint(supplement.bp, url_prefix='/supplement')
         
         return app

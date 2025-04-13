@@ -189,47 +189,115 @@
                         </div>
                     </div>
 
-                    <!-- Today's Meals List -->
-                    {% if meals %}
-                        <h5 class="mt-4 mb-3">Today's Meals</h5>
-                        <div class="table-responsive">
-                            <table class="table">
+                    <!-- Daily Energy Balance with equal column widths -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Daily Energy Balance/Step Count</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Time</th>
-                                        <th>Food</th>
-                                        <th>Quantity</th>
-                                        <th>Unit</th>
-                                        <th>Calories</th>
-                                        <th>Protein (g)</th>
-                                        <th>Carbs (g)</th>
-                                        <th>Fat (g)</th>
+                                        <th class="text-center" style="width: 25%">Calories Consumed</th>
+                                        <th class="text-center" style="width: 25%">Calories Burned</th>
+                                        <th class="text-center" style="width: 25%">Net Calories</th>
+                                        <th class="text-center" style="width: 25%">Steps</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for meal in meals %}
                                     <tr>
-                                        <td>{{ meal.date_recorded.strftime('%H:%M') }}</td>
-                                        <td>{{ meal.food_name }}</td>
-                                        <td>{{ meal.quantity }}</td>
-                                        <td>{{ meal.unit }}</td>
-                                        <td>{{ "%.1f"|format(meal.calories|default(0)) }}</td>
-                                        <td>{{ "%.1f"|format(meal.protein|default(0)) }}</td>
-                                        <td>{{ "%.1f"|format(meal.carbs|default(0)) }}</td>
-                                        <td>{{ "%.1f"|format(meal.fat|default(0)) }}</td>
+                                        <td class="text-center">{{ "%.0f"|format(totals.calories|default(0)) }}</td>
+                                        <td class="text-center">{{ calories_burned }}</td>
+                                        <td class="text-center">{{ "%.0f"|format(totals.calories|default(0) - calories_burned) }}</td>
+                                        <td class="text-center">
+                                            {% if step_count %}
+                                                {{ step_count }} 
+                                                <small class="text-muted">steps</small>
+                                            {% else %}
+                                                <span class="text-muted">0 steps</span>
+                                            {% endif %}
+                                        </td>
                                     </tr>
-                                    {% endfor %}
                                 </tbody>
-                                <tfoot class="table-light">
-                                    <tr>
-                                        <td colspan="4" class="text-end fw-bold">Total:</td>
-                                        <td class="fw-bold">{{ "%.1f"|format(totals.calories|default(0)) }}</td>
-                                        <td class="fw-bold">{{ "%.1f"|format(totals.protein|default(0)) }}</td>
-                                        <td class="fw-bold">{{ "%.1f"|format(totals.carbs|default(0)) }}</td>
-                                        <td class="fw-bold">{{ "%.1f"|format(totals.fat|default(0)) }}</td>
-                                    </tr>
-                                </tfoot>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Today's Supplements List -->
+                    {% if supplements %}
+                        <h5 class="mt-4 mb-3">Today's Supplements</h5>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%; font-size: 0.85rem;">Time</th>
+                                                <th style="font-size: 0.85rem;">Supplement</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for supplement in supplements %}
+                                            <tr>
+                                                <td>{{ supplement.created_at.strftime('%H:%M') }}</td>
+                                                <td>{{ supplement.supplement_name }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Today's Meals List -->
+                    {% if meals %}
+                        <h5 class="mt-4 mb-3">Today's Meals</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 10%; font-size: 0.85rem;">Time</th>
+                                                <th style="width: 25%; font-size: 0.85rem;">Food</th>
+                                                <th style="width: 10%; font-size: 0.85rem;">Quantity</th>
+                                                <th style="width: 10%; font-size: 0.85rem;">Unit</th>
+                                                <th style="width: 11.25%; font-size: 0.85rem;">Calories</th>
+                                                <th style="width: 11.25%; font-size: 0.85rem;">Protein (g)</th>
+                                                <th style="width: 11.25%; font-size: 0.85rem;">Carbs (g)</th>
+                                                <th style="width: 11.25%; font-size: 0.85rem;">Fat (g)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for meal in meals %}
+                                            <tr>
+                                                <td>{{ meal.date_recorded.strftime('%H:%M') }}</td>
+                                                <td>{{ meal.food_name }}</td>
+                                                <td>{{ meal.quantity }}</td>
+                                                <td>{{ meal.unit }}</td>
+                                                <td>{{ "%.1f"|format(meal.calories|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(meal.protein|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(meal.carbs|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(meal.fat|default(0)) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot class="table-light fw-bold">
+                                            <tr>
+                                                <td>Total:</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>{{ "%.1f"|format(totals.calories|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(totals.protein|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(totals.carbs|default(0)) }}</td>
+                                                <td>{{ "%.1f"|format(totals.fat|default(0)) }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="alert alert-info mt-4">

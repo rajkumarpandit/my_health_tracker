@@ -8,6 +8,7 @@
         <div class="container-fluid px-0">
             <div class="row justify-content-center">
                 <div class="col-md-8">
+                    <!-- Header with title and edit button -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4>Daily Nutrition Targets</h4>
                         {% if not edit_mode and targets %}
@@ -17,58 +18,216 @@
                         {% endif %}
                     </div>
                     
-                    <form method="POST" action="{{ url_for('daily_target.daily_budget') }}">
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.calories.label(class="form-label") }}
-                                    {% if edit_mode or not targets %}
-                                        {{ form.calories(class="form-control") }}
-                                    {% else %}
-                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.calories|float) }}" readonly>
-                                    {% endif %}
+                    <!-- Tabbed interface -->
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic" role="tab">Basic</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="advanced-tab" data-bs-toggle="tab" href="#advanced" role="tab">Advanced</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <!-- Basic Tab -->
+                                <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                                    <form method="POST" action="{{ url_for('daily_target.daily_budget', tab='basic') }}">
+                                        {{ form.hidden_tag() }}
+                                        <input type="hidden" name="tab" value="basic">
+                                        
+                                        <!-- Meal Plan Selection -->
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold">Meal Plan</label>
+                                            <div class="d-flex flex-wrap gap-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="meal_plan" id="plan_existing" value="existing" 
+                                                        {% if not edit_mode %}disabled{% endif %}
+                                                        checked>
+                                                    <label class="form-check-label" for="plan_existing">
+                                                        Existing
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="meal_plan" id="plan_deficit" value="deficit" 
+                                                        {% if not edit_mode %}disabled{% endif %}>
+                                                    <label class="form-check-label" for="plan_deficit">
+                                                        Calorie Deficit
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="meal_plan" id="plan_bulking" value="bulking" 
+                                                        {% if not edit_mode %}disabled{% endif %}>
+                                                    <label class="form-check-label" for="plan_bulking">
+                                                        Bulking
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="meal_plan" id="plan_maintenance" value="maintenance" 
+                                                        {% if not edit_mode %}disabled{% endif %}>
+                                                    <label class="form-check-label" for="plan_maintenance">
+                                                        Maintenance
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Nutrition Values -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Calories (kcal)</label>
+                                                    <input type="number" class="form-control" name="basic_calories" id="basic_calories"
+                                                        value="{{ "%.1f"|format(targets.calories|default(0)|float) if targets else '' }}" 
+                                                        {% if not edit_mode %}readonly{% endif %}>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Protein (g)</label>
+                                                    <input type="number" class="form-control" name="basic_protein" id="basic_protein"
+                                                        value="{{ "%.1f"|format(targets.protein|default(0)|float) if targets else '' }}" 
+                                                        {% if not edit_mode %}readonly{% endif %}>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Carbs (g)</label>
+                                                    <input type="number" class="form-control" name="basic_carbs" id="basic_carbs"
+                                                        value="{{ "%.1f"|format(targets.carbs|default(0)|float) if targets else '' }}" 
+                                                        {% if not edit_mode %}readonly{% endif %}>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Fat (g)</label>
+                                                    <input type="number" class="form-control" name="basic_fat" id="basic_fat"
+                                                        value="{{ "%.1f"|format(targets.fat|default(0)|float) if targets else '' }}" 
+                                                        {% if not edit_mode %}readonly{% endif %}>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Buttons -->
+                                        <div class="d-flex gap-2">
+                                            {% if edit_mode or not targets %}
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            {% endif %}
+                                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Close</a>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div class="mb-3">
-                                    {{ form.protein.label(class="form-label") }}
-                                    {% if edit_mode or not targets %}
-                                        {{ form.protein(class="form-control") }}
-                                    {% else %}
-                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.protein|float) }}" readonly>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.fat.label(class="form-label") }}
-                                    {% if edit_mode or not targets %}
-                                        {{ form.fat(class="form-control") }}
-                                    {% else %}
-                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.fat|float) }}" readonly>
-                                    {% endif %}
-                                </div>
-                                <div class="mb-3">
-                                    {{ form.carbs.label(class="form-label") }}
-                                    {% if edit_mode or not targets %}
-                                        {{ form.carbs(class="form-control") }}
-                                    {% else %}
-                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.carbs|float) }}" readonly>
-                                    {% endif %}
+                                
+                                <!-- Advanced Tab (Existing Functionality) -->
+                                <div class="tab-pane fade" id="advanced" role="tabpanel">
+                                    <form method="POST" action="{{ url_for('daily_target.daily_budget', tab='advanced') }}">
+                                        {{ form.hidden_tag() }}
+                                        <input type="hidden" name="tab" value="advanced">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    {{ form.calories.label(class="form-label") }}
+                                                    {% if edit_mode or not targets %}
+                                                        {{ form.calories(class="form-control") }}
+                                                    {% else %}
+                                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.calories|default(0)|float) }}" readonly>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mb-3">
+                                                    {{ form.protein.label(class="form-label") }}
+                                                    {% if edit_mode or not targets %}
+                                                        {{ form.protein(class="form-control") }}
+                                                    {% else %}
+                                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.protein|default(0)|float) }}" readonly>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    {{ form.fat.label(class="form-label") }}
+                                                    {% if edit_mode or not targets %}
+                                                        {{ form.fat(class="form-control") }}
+                                                    {% else %}
+                                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.fat|default(0)|float) }}" readonly>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="mb-3">
+                                                    {{ form.carbs.label(class="form-label") }}
+                                                    {% if edit_mode or not targets %}
+                                                        {{ form.carbs(class="form-control") }}
+                                                    {% else %}
+                                                        <input type="text" class="form-control" value="{{ "%.1f"|format(targets.carbs|default(0)|float) }}" readonly>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            {% if edit_mode or not targets %}
+                                                {{ form.submit(class="btn btn-primary") }}
+                                            {% endif %}
+                                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Close</a>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="d-flex gap-2">
-                            {% if edit_mode or not targets %}
-                                {{ form.submit(class="btn btn-primary") }}
-                            {% endif %}
-                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Close</a>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{% block scripts %}
+<script>
+    // Function to update nutrition values based on selected meal plan
+    function updateNutritionValues() {
+        const selectedPlan = document.querySelector('input[name="meal_plan"]:checked').value;
+        
+        // Get input fields
+        const caloriesInput = document.getElementById('basic_calories');
+        const proteinInput = document.getElementById('basic_protein');
+        const carbsInput = document.getElementById('basic_carbs');
+        const fatInput = document.getElementById('basic_fat');
+        
+        // Update values based on selected plan
+        switch(selectedPlan) {
+            case 'deficit':
+                caloriesInput.value = '2000';
+                proteinInput.value = '90';
+                carbsInput.value = '90';
+                fatInput.value = '90';
+                break;
+            case 'bulking':
+                caloriesInput.value = '3000';
+                proteinInput.value = '140';
+                carbsInput.value = '200';
+                fatInput.value = '150';
+                break;
+            case 'maintenance':
+                caloriesInput.value = '2500';
+                proteinInput.value = '140';
+                carbsInput.value = '150';
+                fatInput.value = '120';
+                break;
+            case 'existing':
+                // Keep existing values or reset if none
+                caloriesInput.value = '{{ "%.1f"|format(targets.calories|default(0)|float) if targets else "" }}';
+                proteinInput.value = '{{ "%.1f"|format(targets.protein|default(0)|float) if targets else "" }}';
+                carbsInput.value = '{{ "%.1f"|format(targets.carbs|default(0)|float) if targets else "" }}';
+                fatInput.value = '{{ "%.1f"|format(targets.fat|default(0)|float) if targets else "" }}';
+                break;
+        }
+    }
+    
+    // Add event listeners to radio buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const radioButtons = document.querySelectorAll('input[name="meal_plan"]');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', updateNutritionValues);
+        });
+    });
+</script>
+{% endblock %}
+
 {% endblock %}

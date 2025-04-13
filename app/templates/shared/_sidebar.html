@@ -1,5 +1,13 @@
 <div class="sidebar bg-light border-end" style="width: 250px; min-height: 100vh; position: fixed; top: 56px; left: 0;">
     <div class="p-3">
+        <style>
+            .sidebar .nav-link {
+                font-size: 0.9rem;  /* Reduce font size */
+                white-space: nowrap; /* Prevent text wrapping */
+                overflow: hidden;    /* Hide overflow */
+                text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+            }
+        </style>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'meal.record_meal' %}active{% endif %}" 
@@ -13,6 +21,20 @@
                    href="{{ url_for('weight.record_weight') }}">
                     <i class="fas fa-weight me-2"></i>
                     Record Your Weight
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'exercise.track_calories_burned' %}active{% endif %}" 
+                   href="{{ url_for('exercise.track_calories_burned') }}">
+                    <i class="fas fa-fire-alt me-2"></i>
+                    Track Your Calories Burned
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'supplement.track_supplements' %}active{% endif %}" 
+                   href="{{ url_for('supplement.track_supplements') }}">
+                    <i class="fas fa-pills me-2"></i>
+                    Track Supplements
                 </a>
             </li>
             <li class="nav-item">

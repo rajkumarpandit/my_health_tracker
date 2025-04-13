@@ -93,13 +93,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,  // Changed to true
+                    maintainAspectRatio: true,
                     scales: {
                         y: {
                             beginAtZero: false,
                             ticks: {
                                 callback: function(value) {
                                     return value + ' kg';
+                                },
+                                font: {
+                                    weight: '100' // Ultra-light font weight for y-axis ticks
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Weight (kg)',
+                                font: {
+                                    weight: '100' // Ultra-light font weight for y-axis title
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    weight: '100' // Ultra-light font weight for x-axis ticks
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    weight: '100' // Ultra-light font weight for x-axis title
                                 }
                             }
                         }
@@ -110,6 +134,24 @@ document.addEventListener('DOMContentLoaded', function() {
                                 label: function(context) {
                                     return context.raw + ' kg';
                                 }
+                            },
+                            titleFont: {
+                                weight: '100' // Ultra-light font weight for tooltip title
+                            },
+                            bodyFont: {
+                                weight: '100' // Ultra-light font weight for tooltip body
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    weight: '100' // Ultra-light font weight for legend
+                                }
+                            }
+                        },
+                        title: {
+                            font: {
+                                weight: '100' // Ultra-light font weight for chart title (if used)
                             }
                         }
                     }
