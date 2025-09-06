@@ -1,4 +1,4 @@
-Flask==3.0.1
+Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 Flask-WTF==1.2.1
@@ -8,7 +8,10 @@ python-dotenv==1.0.1
 openai==1.69.0
 chromadb==0.4.18
 numpy<2.0.0  # Required for ChromaDB compatibility
-Flask-Migrate==4.0.5
+Flask-Migrate==4.0.0
 gunicorn==21.2.0  # For production deployment
 email-validator==2.1.0  # For form validation
 Pillow==10.2.0  # For image processing
+cryptography
+pymysql==1.1.0
+

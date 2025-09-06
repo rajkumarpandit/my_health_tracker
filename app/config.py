@@ -17,8 +17,28 @@ class Config:
     
     # Database Configuration
     basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    SQLITE_DB_PATH = os.path.join(basedir, os.getenv('SQLITE_DB_PATH', 'instance/health_tracker.db'))
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{SQLITE_DB_PATH}'
+
+    # Check if running on App Engine
+    if os.getenv('GAE_ENV', '').startswith('standard'):
+        # Use Cloud SQL
+        CLOUDSQL_USER = os.getenv('CLOUDSQL_USER')
+        CLOUDSQL_PASSWORD = os.getenv('CLOUDSQL_PASSWORD')
+        CLOUDSQL_DATABASE = os.getenv('CLOUDSQL_DATABASE')
+        CLOUDSQL_CONNECTION_NAME = os.getenv('CLOUDSQL_CONNECTION_NAME')
+        
+        # For deployment, use the production database
+        SQLALCHEMY_DATABASE_URI = (
+            'mysql+pymysql://{user}:{password}@/{database}'
+            '?unix_socket=/cloudsql/{connection_name}').format(
+                user=CLOUDSQL_USER,
+                password=CLOUDSQL_PASSWORD,
+                database=CLOUDSQL_DATABASE,
+                connection_name=CLOUDSQL_CONNECTION_NAME)
+    else:
+        # Use SQLite for local development
+        SQLITE_DB_PATH = os.path.join(basedir, os.getenv('SQLITE_DB_PATH', 'instance/health_tracker.db'))
+        SQLALCHEMY_DATABASE_URI = f'sqlite:///{SQLITE_DB_PATH}'
+        
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # OpenAI Configuration

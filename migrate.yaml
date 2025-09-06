@@ -1,0 +1,21 @@
+runtime: python311
+service: default
+entrypoint: python migrate.py
+instance_class: F2
+
+env_variables:
+  FLASK_APP: "app"
+  FLASK_ENV: "production"
+  SECRET_KEY: "gyt9rtgf4321$-=7juhygRT"
+  CLOUDSQL_USER: "health_tracker_user"
+  CLOUDSQL_PASSWORD: "mht-rkp-gcp-2025-#-Zaq!2wsX"
+  CLOUDSQL_DATABASE: "health_tracker"
+  CLOUDSQL_CONNECTION_NAME: "simply-health-457308:us-central1:health-tracker-db"
+  
+  # Copy all other environment variables from your main app.yaml here
+
+handlers:
+- url: /static
+  static_dir: app/static
+- url: /.*
+  script: auto  
