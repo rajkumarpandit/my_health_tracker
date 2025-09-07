@@ -4,12 +4,19 @@ import os
 from dotenv import load_dotenv
 from .extensions import db, migrate, login_manager
 
-# Load environment variables
-load_dotenv()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Load configuration
+    if os.getenv('FLASK_ENV') == 'production':
+        # Production configuration
+        app.config['DEBUG'] = False
+        app.config['TESTING'] = False
+    else:
+        # Development configuration
+        load_dotenv()
 
     # Initialize extensions with app
     db.init_app(app)
