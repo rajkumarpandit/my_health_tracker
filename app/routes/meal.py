@@ -1,19 +1,34 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
 import openai
-import chromadb
 import os
 import json
 from datetime import datetime
 from app.models import UserMeal
 from app.extensions import db
-from app.models.daily_target import DailyTarget  # Add this line
-from slugify import slugify 
-from chromadb.config import Settings
+from app.models.daily_target import DailyTarget
 from app.models.exercise import UserExercise
 from app.models.daily_target import DailyTarget
 from app.models.supplement import UserSupplement
 from app.models.nutrition_cache import NutritionCache
+
+# ✅ Add optional imports
+try:
+    import chromadb
+    from chromadb.config import Settings
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    print("ℹ️ ChromaDB not available - using PostgreSQL cache only")
+    chromadb = None
+    Settings = None
+    CHROMADB_AVAILABLE = False
+
+try:
+    from slugify import slugify
+except ImportError:
+    import re
+    def slugify(text):
+        return re.sub(r'[^a-zA-Z0-9]+', '_', text.lower()).strip('_')
 
 bp = Blueprint('meal', __name__)
 
@@ -29,15 +44,12 @@ client = openai.OpenAI(
 
 def get_chroma_client():
     """Get ChromaDB client with proper configuration."""
-    # Disable ChromaDB in production to avoid deployment issues
-    if os.getenv('FLASK_ENV') == 'production':
+    # Skip ChromaDB in production or if not available
+    if os.getenv('FLASK_ENV') == 'production' or not CHROMADB_AVAILABLE:
         print("🔧 ChromaDB disabled in production - using PostgreSQL cache only")
         return None
     
     try:
-        import chromadb
-        from chromadb.config import Settings
-        
         # Use environment variable or default path
         chroma_path = os.getenv('CHROMA_DB_PATH', 'instance/chromadb')
         os.makedirs(chroma_path, exist_ok=True)
@@ -51,9 +63,6 @@ def get_chroma_client():
         )
         return client
         
-    except ImportError:
-        print("ℹ️ ChromaDB not available - using PostgreSQL cache only")
-        return None
     except Exception as e:
         print(f"⚠️ ChromaDB setup failed: {e}")
         return None
@@ -245,8 +254,9 @@ def save_to_postgresql_cache(food_id, food_name, nutrition_data):
 
 def save_to_chromadb(food_id, food_name, nutrition_data):
     """Save nutrition data to ChromaDB."""
-    if os.getenv('FLASK_ENV') == 'production':
-        return  # Skip in production
+    # Skip in production or if ChromaDB not available
+    if os.getenv('FLASK_ENV') == 'production' or not CHROMADB_AVAILABLE:
+        return
     
     try:
         chroma_client = get_chroma_client()
