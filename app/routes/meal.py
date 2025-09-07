@@ -29,12 +29,17 @@ client = openai.OpenAI(
 
 def get_chroma_client():
     """Get ChromaDB client with proper configuration."""
+    # Disable ChromaDB in production to avoid deployment issues
+    if os.getenv('FLASK_ENV') == 'production':
+        print("🔧 ChromaDB disabled in production - using PostgreSQL cache only")
+        return None
+    
     try:
-        from flask import current_app
-        chroma_path = current_app.config['CHROMA_DB_PATH']
+        import chromadb
+        from chromadb.config import Settings
         
-        # Ensure directory exists
-        import os
+        # Use environment variable or default path
+        chroma_path = os.getenv('CHROMA_DB_PATH', 'instance/chromadb')
         os.makedirs(chroma_path, exist_ok=True)
         
         client = chromadb.PersistentClient(
@@ -45,10 +50,13 @@ def get_chroma_client():
             )
         )
         return client
+        
+    except ImportError:
+        print("ℹ️ ChromaDB not available - using PostgreSQL cache only")
+        return None
     except Exception as e:
-        print(f"Error creating ChromaDB client: {e}")
-        # Fallback to in-memory client
-        return chromadb.Client()
+        print(f"⚠️ ChromaDB setup failed: {e}")
+        return None
 
 def parse_meal_text(meal_text):
     """Parse meal text using OpenAI to extract food details."""
@@ -237,15 +245,21 @@ def save_to_postgresql_cache(food_id, food_name, nutrition_data):
 
 def save_to_chromadb(food_id, food_name, nutrition_data):
     """Save nutrition data to ChromaDB."""
+    if os.getenv('FLASK_ENV') == 'production':
+        return  # Skip in production
+    
     try:
         chroma_client = get_chroma_client()
-        collection = chroma_client.get_or_create_collection(name="food_nutrients")
+        if not chroma_client:
+            return
         
         # Convert None to "null" for JSON serialization
         json_nutrition_data = {
             k: v if v is not None else "null"
             for k, v in nutrition_data.items()
         }
+        
+        collection = chroma_client.get_or_create_collection(name="food_nutrients")
         
         collection.upsert(
             documents=[json.dumps(json_nutrition_data)],
@@ -255,7 +269,7 @@ def save_to_chromadb(food_id, food_name, nutrition_data):
         print(f"✅ Successfully saved to ChromaDB: {food_name}")
         
     except Exception as e:
-        print(f"❌ Error saving to ChromaDB: {e}")
+        print(f"⚠️ ChromaDB save failed: {e}")
         # Don't raise the error - just log it since PostgreSQL cache worked
 
 def call_openai_for_nutrition(food_name, measurement_type):
