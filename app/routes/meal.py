@@ -32,15 +32,29 @@ except ImportError:
 
 bp = Blueprint('meal', __name__)
 
-# Initialize OpenAI API key
+# ❌ Remove this module-level initialization:
+# client = openai.OpenAI(
+#   api_key=os.getenv('OPENAI_API_KEY')
+# )
 
+# ✅ Add function to get OpenAI client when needed
+def get_openai_client():
+    """Get OpenAI client with proper error handling."""
+    try:
+        api_key = os.getenv('OPENAI_API_KEY')
+        if not api_key:
+            print("❌ No OpenAI API key found")
+            return None
+        
+        client = openai.OpenAI(api_key=api_key)
+        return client
+    except Exception as e:
+        print(f"❌ Error initializing OpenAI client: {e}")
+        return None
+
+# Initialize OpenAI API key
 print("Openai version:", openai.__version__)
-# print("Chromadb version:", chromadb.__version__)
 print("Flask Environment:", os.getenv('FLASK_ENV'))
-# print("ChromaDB Path:", os.getenv('CHROMADB_PATH'))
-client = openai.OpenAI(
-  api_key=os.getenv('OPENAI_API_KEY')
-)
 
 def get_chroma_client():
     """Get ChromaDB client with proper configuration."""
@@ -69,7 +83,12 @@ def get_chroma_client():
 
 def parse_meal_text(meal_text):
     """Parse meal text using OpenAI to extract food details."""
-    # print("Inside parse_meal_text-->", meal_text)
+    
+    # ✅ Get OpenAI client when needed
+    client = get_openai_client()
+    if not client:
+        print("❌ OpenAI client not available")
+        return None
 
     prompt = f"""Parse the following meal text and extract:
     1. Food name (e.g., 'boiled chicken')
@@ -97,14 +116,11 @@ def parse_meal_text(meal_text):
                 {"role": "user", "content": prompt}
             ]
         )
-        # print('Came here')
-        # print("OpenAI response:", response)
         return json.loads(response.choices[0].message.content)
 
     except Exception as e:
         print(f"[parse_meal_text] Error parsing meal text: {e}")
         return None
-
 
 def get_nutrition_info(food_name, quantity, unit, measurement_type):
     """
@@ -284,6 +300,13 @@ def save_to_chromadb(food_id, food_name, nutrition_data):
 
 def call_openai_for_nutrition(food_name, measurement_type):
     """Extract OpenAI API call logic to separate function."""
+    
+    # ✅ Get OpenAI client when needed
+    client = get_openai_client()
+    if not client:
+        print("❌ OpenAI client not available for nutrition lookup")
+        return None
+    
     prompt = f"""Act as a professional nutritionist providing USDA-standard nutritional data for {food_name}. 
         The measurement type provided is: {measurement_type} (weight or count).
 
