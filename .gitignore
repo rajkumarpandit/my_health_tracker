@@ -20,29 +20,125 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual Environment
 venv/
 ENV/
+env/
+.venv/
 
-# IDE
+# IDE & Editors
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
+.DS_Store
+Thumbs.db
 
-# Local development
-instance/
+# Environment & Config Files
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
+config.py.local
+*.ini.local
 
-# ChromaDB
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+instance/
+migrations/versions/*.py
+!migrations/
+!migrations/env.py
+!migrations/script.py.mako
+!migrations/alembic.ini
+
+# Vector Database & AI
 data/chromadb/
+chromadb/
+*.chromadb
+chroma.sqlite3
 
-# Logs
+# API Keys & Secrets
+openai_key.txt
+api_keys.txt
+secrets.json
+
+# Logs & Debug
 *.log
+logs/
+debug.log
+error.log
+app.log
 
 # Test files
 test_*.py
 temp*.py
+*_test.py
+tests/__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Node.js (if you add any frontend build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Production & Deployment
+.dockerignore
+docker-compose.override.yml
+*.tar.gz
+*.zip
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig
+*.tmp
+
+# Health Tracker Specific
+uploads/
+user_data/
+export/
+backups/
+
+# Jupyter Notebooks (if you use them for analysis)
+.ipynb_checkpoints/
+*.ipynb
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

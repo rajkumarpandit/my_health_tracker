@@ -1,5 +1,6 @@
 from datetime import datetime
-from app import db
+# from app import db
+from app.extensions import db
 
 class UserSupplement(db.Model):
     __tablename__ = 'user_supplements'

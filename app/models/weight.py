@@ -1,5 +1,6 @@
 from datetime import datetime
-from app.models import db
+# from app.models import db
+from app.extensions import db
 
 class UserWeight(db.Model):
     __tablename__ = 'user_weights'

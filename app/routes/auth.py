@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.models.user import User
+from app.models.user import RegisteredUser
 from app.forms.auth import LoginForm, RegistrationForm
 from app import db
 
@@ -14,7 +14,7 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = RegisteredUser.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             # Set session as permanent but it will expire based on PERMANENT_SESSION_LIFETIME
             session.permanent = True
@@ -34,11 +34,11 @@ def register():
     
     form = RegistrationForm()
     if form.validate_on_submit():
-        if User.query.filter_by(email=form.email.data).first():
+        if RegisteredUser.query.filter_by(email=form.email.data).first():
             flash('Email already registered', 'error')
             return render_template('auth/register.html', form=form)
-        
-        user = User(
+
+        user = RegisteredUser(
             username=form.username.data,
             email=form.email.data,
             password_hash=generate_password_hash(form.password.data)

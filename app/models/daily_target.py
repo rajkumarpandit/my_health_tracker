@@ -1,4 +1,5 @@
-from app import db
+# from app import db
+from app.extensions import db
 from datetime import datetime
 
 class DailyTarget(db.Model):
@@ -12,4 +13,4 @@ class DailyTarget(db.Model):
     carbs = db.Column(db.Float, nullable=False)
     date_modified = db.Column(db.DateTime, default=datetime.now)  # Changed from utcnow to now
 
-    user = db.relationship('User', backref='daily_target')
+    user = db.relationship('RegisteredUser', backref='daily_target')

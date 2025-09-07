@@ -1,0 +1,270 @@
+/* Global Variables */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --text-color: #2b2d42;
+    --light-bg: #f8f9fa;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+    overflow-x: hidden;
+    background-color: #ffffff;  /* White background */
+    padding-top: 56px;  /* Height of navbar */
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #ffffff;  /* White background */
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    height: 56px;              /* Fixed navbar height */
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.navbar-brand i {
+    margin-right: 0.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding-top: 5rem;
+}
+
+.hero h1 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.hero .lead {
+    font-size: 1.25rem;
+    color: #6c757d;
+}
+
+.cta-buttons {
+    margin-top: 2rem;
+}
+
+/* Cards and Components */
+.card {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+/* Form Styles */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.alert {
+    margin-bottom: 1rem;
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    background-color: var(--light-bg);  /* Keep original sidebar background */
+}
+
+.sidebar .nav-link {
+    color: var(--text-color);
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+    margin: .2rem 0;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary-color);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Main content wrapper */
+.content-wrapper {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+/* Main content area styling */
+.main-content {
+    background-color: #ffffff;  /* White background */
+    min-height: calc(100vh - 56px);  /* Full viewport height minus navbar */
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero h1, .hero p, .cta-buttons {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .hero {
+        text-align: center;
+        padding-top: 6rem;
+    }
+
+    .hero img {
+        margin-top: 3rem;
+    }
+}
+
+/* Form and Input Styling */
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: transparent;
+    padding: 0.5rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    border-bottom: 2px solid var(--primary-color);
+    background-color: transparent;
+}
+
+/* Remove card styling completely */
+.main-content .card {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.main-content .card-header {
+    background-color: transparent;
+    border-bottom: none;
+    padding-left: 0;
+}
+
+.main-content .card-body {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Table styling for transparent background */
+.main-content .table {
+    background-color: transparent;
+}
+
+.main-content .table td, 
+.main-content .table th {
+    background-color: transparent;
+}
+
+/* Nutrition Data Styling */
+.nutrition-box {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    margin-bottom: 10px;
+}
+
+.nutrition-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Placeholder Styling */
+::placeholder {
+    color: #adb5bd !important;
+    opacity: 0.7 !important;
+}
+
+:-ms-input-placeholder,
+::-ms-input-placeholder {
+    color: #adb5bd !important;
+    opacity: 0.7 !important;
+}
+
+/* Helper Text */
+.form-text {
+    color: #6c757d;
+}
+
+/* Specific styling for meal text area */
+#meal_text {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Login Form Styling */
+.login-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-form .form-control {
+    max-width: 100%;
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(0,0,0,.125);
+}

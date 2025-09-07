@@ -11,13 +11,6 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Ensure the instance folder exists
-    db_dir = os.path.dirname(app.config['SQLITE_DB_PATH'])
-    try:
-        os.makedirs(db_dir, exist_ok=True)
-    except OSError as e:
-        print(f"Error creating database directory: {e}")
-
     # Initialize extensions with app
     db.init_app(app)
     migrate.init_app(app, db)
@@ -26,7 +19,27 @@ def create_app(config_class=Config):
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'info'
 
+    # Debug: Print which database is being used
+    db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+    if db_uri.startswith('sqlite:'):
+        print(f"🗃️  Using SQLite database")
+    elif db_uri.startswith('postgresql:'):
+        print(f"🐘 Using PostgreSQL database")
+    elif db_uri.startswith('mysql:'):
+        print(f"🐬 Using MySQL database")
+    
     with app.app_context():
+        # Import ALL models here so Flask-Migrate can detect them
+        from app.models import (
+            RegisteredUser, 
+            UserMeal, 
+            UserExercise, 
+            DailyTarget, 
+            UserSupplement, 
+            UserWeight,
+            NutritionCache
+        )
+        
         # Import routes
         from .routes import auth, main, meal, daily_target
         from .routes import weight

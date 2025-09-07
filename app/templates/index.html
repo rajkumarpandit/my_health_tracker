@@ -30,95 +30,121 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">Track Your Nutrition Journey</h1>
-                    <p class="lead mb-4">Achieve your health goals with our intelligent nutrition tracking system. Simply describe what you ate, and we'll do the rest!</p>
-                    <div class="cta-buttons">
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
-                        <a href="#features" class="btn btn-outline-primary btn-lg">Learn More</a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Health Tracking Illustration" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <section id="features" class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-5">Key Features</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-language"></i>
+    <div class="main-container-onepage">
+        <div class="container-fluid">
+            <div class="row hero-section-onepage align-items-start">
+                <!-- Left side - Hero content -->
+                <div class="col-lg-8">
+                    <div class="hero-content-onepage">
+                        <h1 class="display-5">Track Your Nutrition Journey</h1>
+                        <p class="lead-compact">Achieve your health goals with our intelligent nutrition tracking system. Simply describe what you ate, and we'll do the rest!</p>
+                        <div class="cta-buttons-compact">
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-primary me-3">Get Started</a>
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Sign In</a>
                         </div>
-                        <h3>Natural Language Input</h3>
-                        <p>Simply type what you ate in plain English, and we'll handle the rest.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-chart-pie"></i>
+                        
+                        <!-- Additional hero description -->
+                        <div class="hero-description-compact">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="hero-point-compact">
+                                        <i class="fas fa-brain text-primary fa-lg mb-2"></i>
+                                        <h6>AI-Powered</h6>
+                                        <p class="text-muted small">Smart nutrition analysis using artificial intelligence</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="hero-point-compact">
+                                        <i class="fas fa-language text-primary fa-lg mb-2"></i>
+                                        <h6>Natural Language</h6>
+                                        <p class="text-muted small">Just type what you ate in plain English</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="hero-point-compact">
+                                        <i class="fas fa-chart-line text-primary fa-lg mb-2"></i>
+                                        <h6>Track Progress</h6>
+                                        <p class="text-muted small">Monitor your daily nutrition goals and achievements</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Nutrition Tracking</h3>
-                        <p>Automatically track calories, protein, carbs, and fat intake.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-bullseye"></i>
+                
+                <!-- Right side - Features (Top-aligned) -->
+                <div class="col-lg-4">
+                    <div class="features-sidebar-onepage">
+                        <h5><i class="fas fa-star text-primary me-2"></i>Key Features</h5>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-language text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">Natural Language Input</h6>
+                                    <p class="feature-text-small text-muted mb-0">Type what you ate in plain English - we'll handle the rest automatically.</p>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Goal Setting</h3>
-                        <p>Set and track your daily nutrition goals with ease.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="container">
-        <h1 class="mb-4">Welcome to My Health Tracker</h1>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Record Meal</h5>
-                        <p class="card-text">Track your daily food intake and get nutritional information.</p>
-                        <a href="#" class="btn btn-primary">Record a Meal</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Set Limits</h5>
-                        <p class="card-text">Configure your daily nutritional goals and limits.</p>
-                        <a href="#" class="btn btn-primary">Set Limits</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Summary</h5>
-                        <p class="card-text">View your daily nutrition summary and progress.</p>
-                        <a href="#" class="btn btn-primary">View Summary</a>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-chart-pie text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">Smart Nutrition Tracking</h6>
+                                    <p class="feature-text-small text-muted mb-0">Automatically calculate calories, protein, carbs, and fat with AI analysis.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-bullseye text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">Personalized Goals</h6>
+                                    <p class="feature-text-small text-muted mb-0">Set custom daily nutrition targets and track progress with visual charts.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-brain text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">AI-Powered Analysis</h6>
+                                    <p class="feature-text-small text-muted mb-0">Get intelligent food suggestions based on your eating patterns.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-mobile-alt text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">Easy to Use</h6>
+                                    <p class="feature-text-small text-muted mb-0">Clean interface that works on desktop, tablet, and mobile devices.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item-onepage">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-shield-alt text-primary me-2 mt-1 feature-icon-small"></i>
+                                <div>
+                                    <h6 class="mb-1 feature-title-small">Secure & Private</h6>
+                                    <p class="feature-text-small text-muted mb-0">Your health data is encrypted and secure. We never share your information.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="bg-light py-4">
+    <footer class="py-2">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2025 My Health Tracker. All rights reserved.</p>
+            <p class="mb-0 text-muted" style="font-size: 0.8rem;">&copy; 2025 My Health Tracker. All rights reserved.</p>
         </div>
     </footer>
 

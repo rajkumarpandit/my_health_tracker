@@ -9,7 +9,7 @@ bp = Blueprint('supplement', __name__)
 # List of all available supplements
 SUPPLEMENTS = [
     "Omega 3", "Magnesium", "Multi Vitamin", "Boron", "Vitamin D", 
-    "Fenel Seed", "Fenu Greek", "Creatine", "Ashwagandha", "Collagen", 
+    "Fennel Seed", "Fenugreek", "Creatine", "Ashwagandha", "Collagen", 
     "Zinc", "Probiotic", "Shilajit", "Grape Seed Extract", "Tribulus", 
     "Calcium", "Ginseng", "Glucosamine Chondroitin", "B12", 
     "Folic Acid", "Vitamin K", "Tribulus Terrestris"

@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.models.exercise import UserExercise
-from app import db
+# from app import db
+from app.extensions import db
 from datetime import datetime
 
 bp = Blueprint('exercise', __name__)
