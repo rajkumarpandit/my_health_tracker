@@ -35,9 +35,9 @@ bp = Blueprint('meal', __name__)
 # Initialize OpenAI API key
 
 print("Openai version:", openai.__version__)
-print("Chromadb version:", chromadb.__version__)
+# print("Chromadb version:", chromadb.__version__)
 print("Flask Environment:", os.getenv('FLASK_ENV'))
-print("ChromaDB Path:", os.getenv('CHROMADB_PATH'))
+# print("ChromaDB Path:", os.getenv('CHROMADB_PATH'))
 client = openai.OpenAI(
   api_key=os.getenv('OPENAI_API_KEY')
 )
