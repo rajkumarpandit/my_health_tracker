@@ -1,70 +1,240 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Remove the old duplicate sidebar and layout -->
+<!-- OLD CODE TO REMOVE:
 <div class="d-flex">
     {% include 'shared/_sidebar.html' %}
     
     <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-        <div class="container-fluid px-0">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <!-- Header section with X button -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">Record Your Weight</h4>
-                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-body">
-                            <form method="POST" action="{{ url_for('weight.record_weight') }}">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="date" class="form-label">Date</label>
-                                        <input type="date" class="form-control" id="date" name="date" value="{{ today }}" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="weight" class="form-label">Weight (kg)</label>
-                                        <input type="number" class="form-control" id="weight" name="weight" step="0.01" min="20" max="300" required>
-                                    </div>
+-->
+
+<!-- NEW CLEAN CODE: -->
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Header section with X button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Record Your Weight</h4>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+            
+            <!-- Date indicator -->
+            <div class="alert alert-info mb-3">
+                <i class="fas fa-calendar-day me-2"></i>
+                Recording weight for: <strong>{{ today }}</strong>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-weight me-2"></i>Weight Entry
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('weight.record_weight') }}" id="weightForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">
+                                        <i class="fas fa-calendar me-1"></i>Date
+                                    </label>
+                                    <input type="date" class="form-control" id="date" name="date" value="{{ today }}" required>
+                                    <small class="form-text text-muted">Select the date for this weight measurement</small>
                                 </div>
-                                <div class="d-flex mt-4">
-                                    <button type="submit" class="btn btn-primary me-2">Save</button>
-                                    <button type="reset" class="btn btn-secondary me-2">Reset</button>
-                                    <!-- Removed the Close button from here -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="weight" class="form-label">
+                                        <i class="fas fa-weight-hanging me-1"></i>Weight (kg)
+                                    </label>
+                                    <input type="number" class="form-control" id="weight" name="weight" step="0.01" min="20" max="300" required placeholder="Enter your weight">
+                                    <small class="form-text text-muted">Enter weight between 20-300 kg</small>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Weight History Chart -->
-                    <div class="card mt-4">
-                        <div class="card-body">
-                            <h4 class="mb-4">Weight History (Last 7 Days)</h4>
-                            
-                            {% if chart_dates and chart_dates != '[]' %}
-                                <div style="height: 300px; position: relative;"> <!-- Fixed height container -->
-                                    <canvas id="weightChart"></canvas>
+                        
+                        <!-- BMI Calculator (Optional Enhancement) -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="height" class="form-label">
+                                        <i class="fas fa-ruler-vertical me-1"></i>Height (cm) <small class="text-muted">(optional)</small>
+                                    </label>
+                                    <input type="number" class="form-control" id="height" name="height" step="0.1" min="100" max="250" placeholder="Enter your height for BMI calculation">
+                                    <small class="form-text text-muted">Height for BMI calculation</small>
                                 </div>
-                            {% else %}
-                                <div class="alert alert-info">
-                                    No weight data recorded in the last 7 days. Start tracking today!
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-calculator me-1"></i>BMI
+                                    </label>
+                                    <div class="form-control bg-light" id="bmi-display" style="color: #6c757d;">
+                                        Enter weight and height to calculate BMI
+                                    </div>
+                                    <small class="form-text text-muted" id="bmi-category"></small>
                                 </div>
-                            {% endif %}
+                            </div>
                         </div>
-                    </div>
+                        
+                        <div class="d-flex mt-4 gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Weight
+                            </button>
+                            <button type="reset" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-undo me-2"></i>Reset
+                            </button>
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Weight History Chart -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Weight History (Last 7 Days)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if chart_dates and chart_dates != '[]' %}
+                        <div style="height: 300px; position: relative;"> <!-- Fixed height container -->
+                            <canvas id="weightChart"></canvas>
+                        </div>
+                        
+                        <!-- Weight Statistics -->
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <div class="stat-box text-center p-3 border rounded">
+                                    <div class="stat-icon text-primary mb-2">
+                                        <i class="fas fa-weight fa-2x"></i>
+                                    </div>
+                                    <div class="stat-number text-primary fw-bold" id="current-weight">--</div>
+                                    <div class="stat-label text-muted">Current Weight</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-box text-center p-3 border rounded">
+                                    <div class="stat-icon text-success mb-2">
+                                        <i class="fas fa-chart-line fa-2x"></i>
+                                    </div>
+                                    <div class="stat-number text-success fw-bold" id="weight-change">--</div>
+                                    <div class="stat-label text-muted">7-Day Change</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-box text-center p-3 border rounded">
+                                    <div class="stat-icon text-info mb-2">
+                                        <i class="fas fa-calculator fa-2x"></i>
+                                    </div>
+                                    <div class="stat-number text-info fw-bold" id="avg-weight">--</div>
+                                    <div class="stat-label text-muted">7-Day Average</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-box text-center p-3 border rounded">
+                                    <div class="stat-icon text-warning mb-2">
+                                        <i class="fas fa-target fa-2x"></i>
+                                    </div>
+                                    <div class="stat-number text-warning fw-bold" id="goal-status">--</div>
+                                    <div class="stat-label text-muted">Goal Status</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <h6>No weight data recorded in the last 7 days</h6>
+                            <p class="mb-0">Start tracking today to see your progress chart!</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+<!-- Remove the closing divs from the old layout -->
+
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// BMI Calculator
+function calculateBMI() {
+    const weight = parseFloat(document.getElementById('weight').value);
+    const height = parseFloat(document.getElementById('height').value);
+    
+    if (weight && height) {
+        const heightInM = height / 100;
+        const bmi = weight / (heightInM * heightInM);
+        const bmiDisplay = document.getElementById('bmi-display');
+        const bmiCategory = document.getElementById('bmi-category');
+        
+        bmiDisplay.textContent = bmi.toFixed(1);
+        
+        // BMI Categories
+        if (bmi < 18.5) {
+            bmiCategory.textContent = 'Underweight';
+            bmiCategory.className = 'form-text text-info';
+        } else if (bmi < 25) {
+            bmiCategory.textContent = 'Normal weight';
+            bmiCategory.className = 'form-text text-success';
+        } else if (bmi < 30) {
+            bmiCategory.textContent = 'Overweight';
+            bmiCategory.className = 'form-text text-warning';
+        } else {
+            bmiCategory.textContent = 'Obese';
+            bmiCategory.className = 'form-text text-danger';
+        }
+    } else {
+        document.getElementById('bmi-display').textContent = 'Enter weight and height to calculate BMI';
+        document.getElementById('bmi-category').textContent = '';
+    }
+}
+
+function resetForm() {
+    document.getElementById('weightForm').reset();
+    document.getElementById('bmi-display').textContent = 'Enter weight and height to calculate BMI';
+    document.getElementById('bmi-category').textContent = '';
+}
+
+function updateStatistics(weights) {
+    if (weights && weights.length > 0) {
+        const current = weights[weights.length - 1];
+        const oldest = weights[0];
+        const change = current - oldest;
+        const average = weights.reduce((a, b) => a + b, 0) / weights.length;
+        
+        document.getElementById('current-weight').textContent = current.toFixed(1) + ' kg';
+        document.getElementById('weight-change').textContent = (change >= 0 ? '+' : '') + change.toFixed(1) + ' kg';
+        document.getElementById('avg-weight').textContent = average.toFixed(1) + ' kg';
+        
+        // Goal status (assuming weight loss goal)
+        if (change < 0) {
+            document.getElementById('goal-status').textContent = 'On Track';
+            document.getElementById('goal-status').className = 'stat-number text-success fw-bold';
+        } else if (change === 0) {
+            document.getElementById('goal-status').textContent = 'Maintaining';
+            document.getElementById('goal-status').className = 'stat-number text-info fw-bold';
+        } else {
+            document.getElementById('goal-status').textContent = 'Review Goal';
+            document.getElementById('goal-status').className = 'stat-number text-warning fw-bold';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for BMI calculation
+    document.getElementById('weight').addEventListener('input', calculateBMI);
+    document.getElementById('height').addEventListener('input', calculateBMI);
+    
     try {
         // Safely parse JSON data from Flask
         const chartDates = {{ chart_dates|safe }};
@@ -74,6 +244,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const chartCanvas = document.getElementById('weightChart');
         if (chartDates && chartDates.length > 0 && chartCanvas) {
             const ctx = chartCanvas.getContext('2d');
+            
+            // Update statistics
+            updateStatistics(chartWeights);
             
             // Create the chart
             new Chart(ctx, {
@@ -85,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         data: chartWeights,
                         fill: false,
                         borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         tension: 0.1,
                         pointBackgroundColor: 'rgb(75, 192, 192)',
                         pointRadius: 5,
@@ -102,28 +276,28 @@ document.addEventListener('DOMContentLoaded', function() {
                                     return value + ' kg';
                                 },
                                 font: {
-                                    weight: '100' // Ultra-light font weight for y-axis ticks
+                                    weight: '300'
                                 }
                             },
                             title: {
                                 display: true,
                                 text: 'Weight (kg)',
                                 font: {
-                                    weight: '100' // Ultra-light font weight for y-axis title
+                                    weight: '400'
                                 }
                             }
                         },
                         x: {
                             ticks: {
                                 font: {
-                                    weight: '100' // Ultra-light font weight for x-axis ticks
+                                    weight: '300'
                                 }
                             },
                             title: {
                                 display: true,
                                 text: 'Date',
                                 font: {
-                                    weight: '100' // Ultra-light font weight for x-axis title
+                                    weight: '400'
                                 }
                             }
                         }
@@ -136,22 +310,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             },
                             titleFont: {
-                                weight: '100' // Ultra-light font weight for tooltip title
+                                weight: '400'
                             },
                             bodyFont: {
-                                weight: '100' // Ultra-light font weight for tooltip body
+                                weight: '300'
                             }
                         },
                         legend: {
                             labels: {
                                 font: {
-                                    weight: '100' // Ultra-light font weight for legend
+                                    weight: '400'
                                 }
-                            }
-                        },
-                        title: {
-                            font: {
-                                weight: '100' // Ultra-light font weight for chart title (if used)
                             }
                         }
                     }
@@ -166,4 +335,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<style>
+.stat-box {
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+#bmi-display {
+    font-weight: 600;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .stat-box {
+        margin-bottom: 1rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
 {% endblock %}

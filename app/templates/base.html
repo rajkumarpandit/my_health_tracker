@@ -3,143 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %} - My Health Tracker</title>
-    <!-- Bootstrap CSS -->
+    <title>{% block title %}My Health Tracker{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .alert {
-            transition: opacity 0.5s ease-in-out;
-        }
-        .alert.fade-out {
-            opacity: 0;
-        }
-    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-2">  <!-- Reduced padding -->
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="fas fa-heartbeat"></i> My Health Tracker
-            </a>
+<body class="{% if current_user.is_authenticated %}has-sidebar{% else %}no-sidebar{% endif %}">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <!-- Updated navbar brand to link to dashboard when logged in, or home when not logged in -->
+            {% if current_user.is_authenticated %}
+                <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
+                    <i class="fas fa-heartbeat text-primary"></i> My Health Tracker
+                </a>
+            {% else %}
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-heartbeat text-primary"></i> My Health Tracker
+                </a>
+            {% endif %}
+            
+            <!-- Sidebar Toggle Button (only show when logged in) -->
+            {% if current_user.is_authenticated %}
+            <button class="sidebar-toggle d-lg-block" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            {% endif %}
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
-                {% if current_user.is_authenticated %}
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="nav-link">Welcome, {{ current_user.username|title }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                    </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('main.dashboard') }}">
+                                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-outline-primary me-2" href="{{ url_for('auth.login') }}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Sign Up</a>
+                        </li>
+                    {% endif %}
                 </ul>
-                {% else %}
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                    </li>
-                </ul>
-                {% endif %}
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid" style="margin-top: 60px;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category != 'success-quiet' %}
-                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        {% block content %}
-        <div class="d-flex">
-            {% include 'shared/_sidebar.html' %}
-            
-            <!-- Main content area -->
-            <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-                <div class="container-fluid px-0">
-                    <div class="row justify-content-center">
-                        <div class="col-md-8">
-                            <h4 class="mb-4">Today's Consumption Summary</h4>
-                            
-                            <!-- Nutrition Summary Card -->
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <th>Total Calories</th>
-                                                    <td>{{ "%.1f"|format(totals.calories|float) }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Protein</th>
-                                                    <td>{{ "%.1f"|format(totals.protein|float) }}g</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <th>Total Fat</th>
-                                                    <td>{{ "%.1f"|format(totals.fat|float) }}g</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Carbs</th>
-                                                    <td>{{ "%.1f"|format(totals.carbs|float) }}g</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endblock %}
+    <!-- Sidebar (only show when logged in) -->
+    {% if current_user.is_authenticated %}
+    <div class="sidebar-wrapper" id="sidebarWrapper">
+        {% include 'shared/_sidebar.html' %}
     </div>
+    
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    {% endif %}
+    
+    <!-- Main Content Area - SINGLE CONTENT BLOCK -->
+    <main class="{% if current_user.is_authenticated %}main-content{% else %}content-no-sidebar{% endif %}" id="{% if current_user.is_authenticated %}mainContent{% else %}publicContent{% endif %}">
+        <div class="{% if current_user.is_authenticated %}content-container{% else %}container mt-4{% endif %}">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <!-- Add FontAwesome if not already present -->
-    <script src="https://kit.fontawesome.com/your-kit-code.js"></script>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Flash Message Auto-Hide Script -->
+    
+    <!-- Sidebar Toggle Script (only load when user is logged in) -->
+    {% if current_user.is_authenticated %}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get all alert elements
-            const alerts = document.querySelectorAll('.alert');
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarWrapper = document.getElementById('sidebarWrapper');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
+        
+        // Toggle sidebar function
+        function toggleSidebar() {
+            const isCollapsed = sidebarWrapper.classList.contains('collapsed');
             
-            alerts.forEach(alert => {
-                // Set timeout to start hiding after 4.5 seconds
-                setTimeout(() => {
-                    alert.classList.add('fade-out');
-                }, 1500);
-                
-                // Remove the alert after fade out (after 5 seconds)
-                setTimeout(() => {
-                    alert.remove();
-                }, 2000);
+            if (isCollapsed) {
+                // Expand sidebar
+                sidebarWrapper.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                body.classList.remove('sidebar-collapsed');
+                localStorage.setItem('sidebarCollapsed', 'false');
+            } else {
+                // Collapse sidebar
+                sidebarWrapper.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+                body.classList.add('sidebar-collapsed');
+                localStorage.setItem('sidebarCollapsed', 'true');
+            }
+        }
+        
+        // Toggle button click event
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
+        }
+        
+        // Overlay click event (for mobile)
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebarWrapper.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    sidebarOverlay.classList.remove('active');
+                }
             });
+        }
+        
+        // Handle mobile sidebar toggle
+        function handleMobileToggle() {
+            if (window.innerWidth <= 768) {
+                const isCollapsed = sidebarWrapper.classList.contains('collapsed');
+                if (!isCollapsed) {
+                    sidebarOverlay.classList.add('active');
+                } else {
+                    sidebarOverlay.classList.remove('active');
+                }
+            }
+        }
+        
+        // Load saved state from localStorage
+        const savedState = localStorage.getItem('sidebarCollapsed');
+        if (savedState === 'true') {
+            sidebarWrapper.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+            body.classList.add('sidebar-collapsed');
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebarOverlay.classList.remove('active');
+            }
         });
+        
+        // Update mobile behavior when toggling
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', handleMobileToggle);
+        }
+    });
     </script>
-    <!-- Custom JavaScript -->
+    {% endif %}
+    
     {% block scripts %}{% endblock %}
 </body>
 </html>

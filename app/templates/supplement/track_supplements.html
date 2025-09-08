@@ -1,101 +1,155 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Remove the old duplicate sidebar and layout -->
+<!-- OLD CODE TO REMOVE:
 <div class="d-flex">
     {% include 'shared/_sidebar.html' %}
     
     <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-        <div class="container-fluid px-0">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <!-- Header section with X button -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">Track Supplements</h4>
-                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </div>
-                    
-                    <!-- Date indicator -->
-                    <div class="alert alert-info mb-3">
-                        <i class="fas fa-calendar-day me-2"></i>
-                        Tracking supplements for: <strong>{{ today.strftime('%B %d, %Y') }}</strong>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-body">
-                            <form method="POST" action="{{ url_for('supplement.track_supplements') }}" id="supplements-form">
-                                <p class="mb-3">Check the supplements you've taken today:</p>
+-->
+
+<!-- NEW CLEAN CODE: -->
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Header section with X button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Track Supplements</h4>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+            
+            <!-- Date indicator -->
+            <div class="alert alert-info mb-3">
+                <i class="fas fa-calendar-day me-2"></i>
+                Tracking supplements for: <strong>{{ today.strftime('%B %d, %Y') }}</strong>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('supplement.track_supplements') }}" id="supplements-form">
+                        <p class="mb-3">Check the supplements you've taken today:</p>
+                        
+                        <style>
+                            .supplement-grid {
+                                display: grid;
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 10px;
+                            }
+                            
+                            .supplement-item {
+                                border: 1px solid #dee2e6;
+                                border-radius: 4px;
+                                padding: 10px;
+                                background-color: #f8f9fa;
+                                transition: background-color 0.2s;
+                            }
+                            
+                            .supplement-item:hover {
+                                background-color: #e9ecef;
+                            }
+                            
+                            .supplement-item.checked {
+                                background-color: #e3f2fd;
+                                border-color: #90caf9;
+                            }
+                            
+                            .supplement-item input {
+                                margin-right: 8px;
+                                vertical-align: middle;
+                            }
+                            
+                            .supplement-item label {
+                                margin-bottom: 0;
+                                display: flex;
+                                align-items: center;
+                                width: 100%;
+                                cursor: pointer;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                            
+                            /* Mobile responsive grid */
+                            @media (max-width: 768px) {
+                                .supplement-grid {
+                                    grid-template-columns: repeat(2, 1fr);
+                                    gap: 8px;
+                                }
                                 
-                                <style>
-                                    .supplement-grid {
-                                        display: grid;
-                                        grid-template-columns: repeat(3, 1fr);
-                                        gap: 10px;
-                                    }
-                                    
-                                    .supplement-item {
-                                        border: 1px solid #dee2e6;
-                                        border-radius: 4px;
-                                        padding: 10px;
-                                        background-color: #f8f9fa;
-                                        transition: background-color 0.2s;
-                                    }
-                                    
-                                    .supplement-item:hover {
-                                        background-color: #e9ecef;
-                                    }
-                                    
-                                    .supplement-item.checked {
-                                        background-color: #e3f2fd;
-                                        border-color: #90caf9;
-                                    }
-                                    
-                                    .supplement-item input {
-                                        margin-right: 8px;
-                                        vertical-align: middle;
-                                    }
-                                    
-                                    .supplement-item label {
-                                        margin-bottom: 0;
-                                        display: flex;
-                                        align-items: center;
-                                        width: 100%;
-                                        cursor: pointer;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                    }
-                                </style>
-                                
-                                <div class="supplement-grid">
-                                    {% for supplement in supplements %}
-                                    <div class="supplement-item {% if supplement in taken_supplements %}checked{% endif %}" onclick="toggleCheckbox('{{ supplement|lower|replace(' ', '_') }}')">
-                                        <label>
-                                            <input type="checkbox" 
-                                                   class="form-check-input" 
-                                                   id="{{ supplement|lower|replace(' ', '_') }}" 
-                                                   name="{{ supplement|lower|replace(' ', '_') }}"
-                                                   {% if supplement in taken_supplements %}checked{% endif %}>
-                                            <span>{{ supplement }}</span>
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                
-                                <!-- Submit buttons -->
-                                <div class="d-flex mt-4">
-                                    <button type="submit" class="btn btn-primary me-2">Save</button>
-                                    <button type="reset" class="btn btn-secondary me-2" onclick="resetForm()">Reset</button>
-                                </div>
-                            </form>
+                                .supplement-item {
+                                    padding: 8px;
+                                }
+                            }
+                            
+                            @media (max-width: 576px) {
+                                .supplement-grid {
+                                    grid-template-columns: 1fr;
+                                    gap: 6px;
+                                }
+                            }
+                        </style>
+                        
+                        <div class="supplement-grid">
+                            {% for supplement in supplements %}
+                            <div class="supplement-item {% if supplement in taken_supplements %}checked{% endif %}" onclick="toggleCheckbox('{{ supplement|lower|replace(' ', '_') }}')">
+                                <label>
+                                    <input type="checkbox" 
+                                           class="form-check-input" 
+                                           id="{{ supplement|lower|replace(' ', '_') }}" 
+                                           name="{{ supplement|lower|replace(' ', '_') }}"
+                                           {% if supplement in taken_supplements %}checked{% endif %}>
+                                    <span>{{ supplement }}</span>
+                                </label>
+                            </div>
+                            {% endfor %}
                         </div>
-                    </div>
+                        
+                        <!-- Submit buttons -->
+                        <div class="d-flex mt-4">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save me-1"></i> Save
+                            </button>
+                            <button type="reset" class="btn btn-secondary me-2" onclick="resetForm()">
+                                <i class="fas fa-undo me-1"></i> Reset
+                            </button>
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
+            
+            <!-- Summary Card -->
+            {% if taken_supplements %}
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-list-check me-2"></i>Today's Supplements Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for supplement in taken_supplements %}
+                        <div class="col-md-4 mb-2">
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>{{ supplement }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Total supplements taken today: {{ taken_supplements|length }}
+                    </small>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
+<!-- Remove the closing divs from the old layout -->
 
 <script>
     function toggleCheckbox(id) {
@@ -108,6 +162,12 @@
         } else {
             parentItem.classList.remove('checked');
         }
+        
+        // Add visual feedback
+        parentItem.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            parentItem.style.transform = 'scale(1)';
+        }, 150);
     }
     
     // Prevent clicking on the label from triggering the div's onClick
@@ -128,6 +188,38 @@
             checkbox.checked = false;
             checkbox.closest('.supplement-item').classList.remove('checked');
         });
+        
+        // Show confirmation
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-info alert-dismissible fade show mt-3';
+        alert.innerHTML = `
+            <i class="fas fa-info-circle me-2"></i>
+            Form has been reset. All supplements unchecked.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.card-body').appendChild(alert);
+        
+        // Auto-remove alert after 3 seconds
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 3000);
     }
+    
+    // Add smooth animations on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.supplement-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.3s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    });
 </script>
 {% endblock %}

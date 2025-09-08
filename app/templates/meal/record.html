@@ -1,248 +1,250 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Remove the old duplicate sidebar and layout -->
+<!-- OLD CODE TO REMOVE:
 <div class="d-flex">
     {% include 'shared/_sidebar.html' %}
     
-    <!-- Main content area -->
     <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-        <div class="container-fluid px-0">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <!-- Header section with title and X button -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">Record Your Macros</h4>
-                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </div>
+-->
 
-                    <div class="card">
-                        <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic" role="tab">Basic</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="advanced-tab" data-bs-toggle="tab" href="#advanced" role="tab">Advanced</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="card-body">
-                            <div class="tab-content">
-                                <!-- Basic Tab (Existing Functionality) -->
-                                <div class="tab-pane fade show active" id="basic" role="tabpanel">
-                                    <form method="POST" action="{{ url_for('meal.record_meal') }}" id="mealForm">
-                                        <div class="mb-3">
-                                            <label for="meal_text" class="form-label">What did you eat today?</label>
-                                            <textarea class="form-control" id="meal_text" name="meal_text" rows="3" 
-                                                    placeholder="Example: I ate 250 grams of grilled chicken breast" 
-                                                    required>{{ meal_text }}</textarea>
-                                            <div class="form-text">
-                                                Describe your meal naturally, including the quantity and type of food.
-                                            </div>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                                Record Meal
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" onclick="resetBasicForm()">
-                                                Reset
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                                
-                                <!-- Advanced Tab (Manual Input) -->
-                                <div class="tab-pane fade" id="advanced" role="tabpanel">
-                                    <form method="POST" action="{{ url_for('meal.record_meal_advanced') }}" id="advancedForm">
-                                        <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label for="food_name" class="form-label">Food Name</label>
-                                                <input type="text" class="form-control" id="food_name" name="food_name" required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="quantity" class="form-label">Quantity</label>
-                                                <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" min="0.1" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="unit" class="form-label">Unit</label>
-                                                <select class="form-select" id="unit" name="unit" required>
-                                                    <option value="grams">Grams</option>
-                                                    <option value="ml">Milliliters</option>
-                                                    <option value="pieces">Pieces</option>
-                                                    <option value="servings">Servings</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="calories" class="form-label">Calories (kcal)</label>
-                                                <input type="number" class="form-control" id="calories" name="calories" step="0.1" min="0" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="protein" class="form-label">Protein (g)</label>
-                                                <input type="number" class="form-control" id="protein" name="protein" step="0.1" min="0" required>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="carbs" class="form-label">Carbs (g)</label>
-                                                <input type="number" class="form-control" id="carbs" name="carbs" step="0.1" min="0" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="fat" class="form-label">Fat (g)</label>
-                                                <input type="number" class="form-control" id="fat" name="fat" step="0.1" min="0" required>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-primary">
-                                                Save
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" onclick="resetAdvancedForm()">
-                                                Reset
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- NEW CLEAN CODE: -->
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Header section with title and X button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Record Your Macros</h4>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
 
-                    {% if parsed_data %}
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="parsed-tab" data-bs-toggle="tab" href="#parsed" role="tab">Parsed Data</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="nutrition-tab" data-bs-toggle="tab" href="#nutrition" role="tab">Unit Nutrition</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="card-body">
-                            <div class="tab-content">
-                                <!-- Parsed Data Tab -->
-                                <div class="tab-pane fade show active" id="parsed" role="tabpanel">
-                                    <div class="container-fluid px-0">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <table class="table table-bordered">
-                                                    <tr><th>Food Name</th><td>{{ parsed_data.food_name }}</td></tr>
-                                                    <tr><th>Quantity</th><td>{{ parsed_data.quantity }}</td></tr>
-                                                </table>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <table class="table table-bordered">
-                                                    <tr><th>Unit</th><td>{{ parsed_data.unit }}</td></tr>
-                                                    <tr><th>Measurement Type</th><td>{{ parsed_data.measurement_type }}</td></tr>
-                                                </table>
-                                            </div>
-                                        </div>
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic" role="tab">Basic</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="advanced-tab" data-bs-toggle="tab" href="#advanced" role="tab">Advanced</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Basic Tab (Existing Functionality) -->
+                        <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                            <form method="POST" action="{{ url_for('meal.record_meal') }}" id="mealForm">
+                                <div class="mb-3">
+                                    <label for="meal_text" class="form-label">What did you eat today?</label>
+                                    <textarea class="form-control" id="meal_text" name="meal_text" rows="3" 
+                                            placeholder="Example: I ate 250 grams of grilled chicken breast" 
+                                            required>{{ meal_text }}</textarea>
+                                    <div class="form-text">
+                                        Describe your meal naturally, including the quantity and type of food.
                                     </div>
                                 </div>
-                                
-                                <!-- Unit Nutrition Data Tab -->
-                                <div class="tab-pane fade" id="nutrition" role="tabpanel">
-                                    <form method="get" action="{{ url_for('meal.record_meal') }}">
-                                        <div class="container-fluid px-0">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <th>Calories</th>
-                                                            <td><input type="text" name="calories" class="form-control" value="{{ unit_nutrition_data.calories }}"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Protein</th>
-                                                            <td><input type="text" name="protein" class="form-control" value="{{ unit_nutrition_data.protein }}"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Fat</th>
-                                                            <td><input type="text" name="fat" class="form-control" value="{{ unit_nutrition_data.fat }}"></td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <th>Carbs</th>
-                                                            <td><input type="text" name="carbs" class="form-control" value="{{ unit_nutrition_data.carbs }}"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Base Quantity</th>
-                                                            <td><input type="text" name="base_quantity" class="form-control" value="{{ unit_nutrition_data.base_quantity }}" readonly></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Base Unit</th>
-                                                            <td><input type="text" name="base_unit" class="form-control" value="{{ unit_nutrition_data.base_unit }}" readonly></td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="parsed_data" value='{{ parsed_data | tojson | safe }}'>
-                                        <input type="hidden" name="meal_text" value="{{ meal_text }}">
-                                        <button type="submit" name="calculate" class="btn btn-primary">Recalculate</button>
-                                    </form>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        Record Meal
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetBasicForm()">
+                                        Reset
+                                    </button>
                                 </div>
-                            </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Advanced Tab (Manual Input) -->
+                        <div class="tab-pane fade" id="advanced" role="tabpanel">
+                            <form method="POST" action="{{ url_for('meal.record_meal_advanced') }}" id="advancedForm">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="food_name" class="form-label">Food Name</label>
+                                        <input type="text" class="form-control" id="food_name" name="food_name" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="quantity" class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" min="0.1" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="unit" class="form-label">Unit</label>
+                                        <select class="form-select" id="unit" name="unit" required>
+                                            <option value="grams">Grams</option>
+                                            <option value="ml">Milliliters</option>
+                                            <option value="pieces">Pieces</option>
+                                            <option value="servings">Servings</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="calories" class="form-label">Calories (kcal)</label>
+                                        <input type="number" class="form-control" id="calories" name="calories" step="0.1" min="0" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="protein" class="form-label">Protein (g)</label>
+                                        <input type="number" class="form-control" id="protein" name="protein" step="0.1" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="carbs" class="form-label">Carbs (g)</label>
+                                        <input type="number" class="form-control" id="carbs" name="carbs" step="0.1" min="0" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="fat" class="form-label">Fat (g)</label>
+                                        <input type="number" class="form-control" id="fat" name="fat" step="0.1" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetAdvancedForm()">
+                                        Reset
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Scaled Nutrition Data</h5>
-                        </div>
-                        <div class="card-body">
+            {% if parsed_data %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="parsed-tab" data-bs-toggle="tab" href="#parsed" role="tab">Parsed Data</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="nutrition-tab" data-bs-toggle="tab" href="#nutrition" role="tab">Unit Nutrition</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Parsed Data Tab -->
+                        <div class="tab-pane fade show active" id="parsed" role="tabpanel">
                             <div class="container-fluid px-0">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <table class="table table-bordered">
-                                            <tr><th>Calories</th><td>{{ scaled_nutrition_data.calories }}</td></tr>
-                                            <tr><th>Protein</th><td>{{ scaled_nutrition_data.protein }}</td></tr>
+                                            <tr><th>Food Name</th><td>{{ parsed_data.food_name }}</td></tr>
+                                            <tr><th>Quantity</th><td>{{ parsed_data.quantity }}</td></tr>
                                         </table>
                                     </div>
                                     <div class="col-md-6">
                                         <table class="table table-bordered">
-                                            <tr><th>Fat</th><td>{{ scaled_nutrition_data.fat }}</td></tr>
-                                            <tr><th>Carbs</th><td>{{ scaled_nutrition_data.carbs }}</td></tr>
+                                            <tr><th>Unit</th><td>{{ parsed_data.unit }}</td></tr>
+                                            <tr><th>Measurement Type</th><td>{{ parsed_data.measurement_type }}</td></tr>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2">
-                                <form method="get" action="{{ url_for('meal.record_meal') }}">
-                                    <!-- Hidden inputs for unit values -->
-                                    <input type="hidden" name="unit_calories" value="{{ unit_nutrition_data.calories }}">
-                                    <input type="hidden" name="unit_protein" value="{{ unit_nutrition_data.protein }}">
-                                    <input type="hidden" name="unit_fat" value="{{ unit_nutrition_data.fat }}">
-                                    <input type="hidden" name="unit_carbs" value="{{ unit_nutrition_data.carbs }}">
-                                    <input type="hidden" name="base_quantity" value="{{ unit_nutrition_data.base_quantity }}">
-                                    <input type="hidden" name="base_unit" value="{{ unit_nutrition_data.base_unit }}">
-                                    
-                                    <!-- Hidden inputs for other necessary data -->
-                                    <input type="hidden" name="food_name" value="{{ parsed_data.food_name }}">
-                                    <input type="hidden" name="quantity" value="{{ parsed_data.quantity }}">
-                                    <input type="hidden" name="unit" value="{{ parsed_data.unit }}">
-                                    <input type="hidden" name="measurement_type" value="{{ parsed_data.measurement_type }}">
-                                    
-                                    <button type="submit" name="confirm" class="btn btn-success">Confirm and Save</button>
-                                </form>
-                                <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+                        </div>
+                        
+                        <!-- Unit Nutrition Data Tab -->
+                        <div class="tab-pane fade" id="nutrition" role="tabpanel">
+                            <form method="get" action="{{ url_for('meal.record_meal') }}">
+                                <div class="container-fluid px-0">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Calories</th>
+                                                    <td><input type="text" name="calories" class="form-control" value="{{ unit_nutrition_data.calories }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Protein</th>
+                                                    <td><input type="text" name="protein" class="form-control" value="{{ unit_nutrition_data.protein }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fat</th>
+                                                    <td><input type="text" name="fat" class="form-control" value="{{ unit_nutrition_data.fat }}"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Carbs</th>
+                                                    <td><input type="text" name="carbs" class="form-control" value="{{ unit_nutrition_data.carbs }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Base Quantity</th>
+                                                    <td><input type="text" name="base_quantity" class="form-control" value="{{ unit_nutrition_data.base_quantity }}" readonly></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Base Unit</th>
+                                                    <td><input type="text" name="base_unit" class="form-control" value="{{ unit_nutrition_data.base_unit }}" readonly></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="parsed_data" value='{{ parsed_data | tojson | safe }}'>
+                                <input type="hidden" name="meal_text" value="{{ meal_text }}">
+                                <button type="submit" name="calculate" class="btn btn-primary">Recalculate</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Scaled Nutrition Data</h5>
+                </div>
+                <div class="card-body">
+                    <div class="container-fluid px-0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tr><th>Calories</th><td>{{ scaled_nutrition_data.calories }}</td></tr>
+                                    <tr><th>Protein</th><td>{{ scaled_nutrition_data.protein }}</td></tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tr><th>Fat</th><td>{{ scaled_nutrition_data.fat }}</td></tr>
+                                    <tr><th>Carbs</th><td>{{ scaled_nutrition_data.carbs }}</td></tr>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
+                    <div class="d-flex gap-2">
+                        <form method="get" action="{{ url_for('meal.record_meal') }}">
+                            <!-- Hidden inputs for unit values -->
+                            <input type="hidden" name="unit_calories" value="{{ unit_nutrition_data.calories }}">
+                            <input type="hidden" name="unit_protein" value="{{ unit_nutrition_data.protein }}">
+                            <input type="hidden" name="unit_fat" value="{{ unit_nutrition_data.fat }}">
+                            <input type="hidden" name="unit_carbs" value="{{ unit_nutrition_data.carbs }}">
+                            <input type="hidden" name="base_quantity" value="{{ unit_nutrition_data.base_quantity }}">
+                            <input type="hidden" name="base_unit" value="{{ unit_nutrition_data.base_unit }}">
+                            
+                            <!-- Hidden inputs for other necessary data -->
+                            <input type="hidden" name="food_name" value="{{ parsed_data.food_name }}">
+                            <input type="hidden" name="quantity" value="{{ parsed_data.quantity }}">
+                            <input type="hidden" name="unit" value="{{ parsed_data.unit }}">
+                            <input type="hidden" name="measurement_type" value="{{ parsed_data.measurement_type }}">
+                            
+                            <button type="submit" name="confirm" class="btn btn-success">Confirm and Save</button>
+                        </form>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+                    </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
-
+<!-- Remove the closing divs from the old layout -->
 
 <script>
     function resetBasicForm() {
@@ -263,6 +265,11 @@
         // Clear all form fields in the advanced tab
         document.getElementById('advancedForm').reset();
         document.getElementById('food_name').focus();
+    }
+    
+    function resetForm() {
+        // Clear the meal text and redirect back
+        window.location.href = "{{ url_for('meal.record_meal') }}";
     }
 </script>
 

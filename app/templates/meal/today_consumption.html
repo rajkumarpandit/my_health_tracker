@@ -1,313 +1,317 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Remove the old duplicate sidebar and layout -->
+<!-- OLD CODE TO REMOVE:
 <div class="d-flex">
     {% include 'shared/_sidebar.html' %}
     
-    <!-- Main content area -->
     <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-        <div class="container-fluid px-0">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <!-- Header section with X button -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">Today's Consumption Summary</h4>
-                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    </div>
-                    
-                    <!-- Nutrition Summary -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>Calories</th>
-                                    <td>
-                                        {{ "%.1f"|format(totals.calories|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.calories|default(0)|float) }}</span> kcal
-                                        <br>
-                                        <small class="
-                                            {% if totals.calories > targets.calories %}text-danger
-                                            {% elif totals.calories == targets.calories %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {% if totals.calories > targets.calories %}
-                                                Exceeded by {{ "%.1f"|format(totals.calories - targets.calories) }} kcal
-                                            {% elif totals.calories == targets.calories %}
-                                                Target reached
-                                            {% else %}
-                                                {{ "%.1f"|format(targets.calories - totals.calories) }} kcal remaining
-                                            {% endif %}
-                                        </small>
-                                        <!-- Progress Bar for Calories -->
-                                        {% set calories_percent = ((totals.calories / targets.calories) * 100) if targets.calories > 0 else 0 %}
-                                        <div class="progress mt-2" style="height: 10px;">
-                                            <div class="progress-bar 
-                                                {% if calories_percent > 100 %}bg-danger
-                                                {% elif calories_percent == 100 %}bg-warning
-                                                {% else %}bg-success{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {% if calories_percent > 100 %}100{% else %}{{ calories_percent }}{% endif %}%;" 
-                                                aria-valuenow="{{ calories_percent }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <small class="d-block text-end mt-1 
-                                            {% if calories_percent > 100 %}text-danger
-                                            {% elif calories_percent == 100 %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {{ "%.1f"|format(calories_percent) }}%
-                                            {% if calories_percent > 100 %} (Overconsumption){% endif %}
-                                        </small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Protein</th>
-                                    <td>
-                                        {{ "%.1f"|format(totals.protein|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.protein|default(0)|float) }}</span> g
-                                        <br>
-                                        <small class="
-                                            {% if totals.protein > targets.protein %}text-danger
-                                            {% elif totals.protein == targets.protein %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {% if totals.protein > targets.protein %}
-                                                Exceeded by {{ "%.1f"|format(totals.protein - targets.protein) }} g
-                                            {% elif totals.protein == targets.protein %}
-                                                Target reached
-                                            {% else %}
-                                                {{ "%.1f"|format(targets.protein - totals.protein) }} g remaining
-                                            {% endif %}
-                                        </small>
-                                        <!-- Progress Bar for Protein -->
-                                        {% set protein_percent = ((totals.protein / targets.protein) * 100) if targets.protein > 0 else 0 %}
-                                        <div class="progress mt-2" style="height: 10px;">
-                                            <div class="progress-bar 
-                                                {% if protein_percent > 100 %}bg-danger
-                                                {% elif protein_percent == 100 %}bg-warning
-                                                {% else %}bg-success{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {% if protein_percent > 100 %}100{% else %}{{ protein_percent }}{% endif %}%;" 
-                                                aria-valuenow="{{ protein_percent }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <small class="d-block text-end mt-1 
-                                            {% if protein_percent > 100 %}text-danger
-                                            {% elif protein_percent == 100 %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {{ "%.1f"|format(protein_percent) }}%
-                                            {% if protein_percent > 100 %} (Overconsumption){% endif %}
-                                        </small>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>Fat</th>
-                                    <td>
-                                        {{ "%.1f"|format(totals.fat|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.fat|default(0)|float) }}</span> g
-                                        <br>
-                                        <small class="
-                                            {% if totals.fat > targets.fat %}text-danger
-                                            {% elif totals.fat == targets.fat %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {% if totals.fat > targets.fat %}
-                                                Exceeded by {{ "%.1f"|format(totals.fat - targets.fat) }} g
-                                            {% elif totals.fat == targets.fat %}
-                                                Target reached
-                                            {% else %}
-                                                {{ "%.1f"|format(targets.fat - totals.fat) }} g remaining
-                                            {% endif %}
-                                        </small>
-                                        <!-- Progress Bar for Fat -->
-                                        {% set fat_percent = ((totals.fat / targets.fat) * 100) if targets.fat > 0 else 0 %}
-                                        <div class="progress mt-2" style="height: 10px;">
-                                            <div class="progress-bar 
-                                                {% if fat_percent > 100 %}bg-danger
-                                                {% elif fat_percent == 100 %}bg-warning
-                                                {% else %}bg-success{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {% if fat_percent > 100 %}100{% else %}{{ fat_percent }}{% endif %}%;" 
-                                                aria-valuenow="{{ fat_percent }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <small class="d-block text-end mt-1 
-                                            {% if fat_percent > 100 %}text-danger
-                                            {% elif fat_percent == 100 %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {{ "%.1f"|format(fat_percent) }}%
-                                            {% if fat_percent > 100 %} (Overconsumption){% endif %}
-                                        </small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Carbs</th>
-                                    <td>
-                                        {{ "%.1f"|format(totals.carbs|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.carbs|default(0)|float) }}</span> g
-                                        <br>
-                                        <small class="
-                                            {% if totals.carbs > targets.carbs %}text-danger
-                                            {% elif totals.carbs == targets.carbs %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {% if totals.carbs > targets.carbs %}
-                                                Exceeded by {{ "%.1f"|format(totals.carbs - targets.carbs) }} g
-                                            {% elif totals.carbs == targets.carbs %}
-                                                Target reached
-                                            {% else %}
-                                                {{ "%.1f"|format(targets.carbs - totals.carbs) }} g remaining
-                                            {% endif %}
-                                        </small>
-                                        <!-- Progress Bar for Carbs -->
-                                        {% set carbs_percent = ((totals.carbs / targets.carbs) * 100) if targets.carbs > 0 else 0 %}
-                                        <div class="progress mt-2" style="height: 10px;">
-                                            <div class="progress-bar 
-                                                {% if carbs_percent > 100 %}bg-danger
-                                                {% elif carbs_percent == 100 %}bg-warning
-                                                {% else %}bg-success{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {% if carbs_percent > 100 %}100{% else %}{{ carbs_percent }}{% endif %}%;" 
-                                                aria-valuenow="{{ carbs_percent }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <small class="d-block text-end mt-1 
-                                            {% if carbs_percent > 100 %}text-danger
-                                            {% elif carbs_percent == 100 %}text-warning
-                                            {% else %}text-success{% endif %}">
-                                            {{ "%.1f"|format(carbs_percent) }}%
-                                            {% if carbs_percent > 100 %} (Overconsumption){% endif %}
-                                        </small>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+-->
 
-                    <!-- Daily Energy Balance with equal column widths -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Daily Energy Balance/Step Count</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
+<!-- NEW CLEAN CODE: -->
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Header section with X button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Today's Consumption Summary</h4>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-circle">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+            
+            <!-- Nutrition Summary -->
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Calories</th>
+                            <td>
+                                {{ "%.1f"|format(totals.calories|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.calories|default(0)|float) }}</span> kcal
+                                <br>
+                                <small class="
+                                    {% if totals.calories > targets.calories %}text-danger
+                                    {% elif totals.calories == targets.calories %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {% if totals.calories > targets.calories %}
+                                        Exceeded by {{ "%.1f"|format(totals.calories - targets.calories) }} kcal
+                                    {% elif totals.calories == targets.calories %}
+                                        Target reached
+                                    {% else %}
+                                        {{ "%.1f"|format(targets.calories - totals.calories) }} kcal remaining
+                                    {% endif %}
+                                </small>
+                                <!-- Progress Bar for Calories -->
+                                {% set calories_percent = ((totals.calories / targets.calories) * 100) if targets.calories > 0 else 0 %}
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div class="progress-bar 
+                                        {% if calories_percent > 100 %}bg-danger
+                                        {% elif calories_percent == 100 %}bg-warning
+                                        {% else %}bg-success{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {% if calories_percent > 100 %}100{% else %}{{ calories_percent }}{% endif %}%;" 
+                                        aria-valuenow="{{ calories_percent }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="d-block text-end mt-1 
+                                    {% if calories_percent > 100 %}text-danger
+                                    {% elif calories_percent == 100 %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(calories_percent) }}%
+                                    {% if calories_percent > 100 %} (Overconsumption){% endif %}
+                                </small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Protein</th>
+                            <td>
+                                {{ "%.1f"|format(totals.protein|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.protein|default(0)|float) }}</span> g
+                                <br>
+                                <small class="
+                                    {% if totals.protein > targets.protein %}text-danger
+                                    {% elif totals.protein == targets.protein %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {% if totals.protein > targets.protein %}
+                                        Exceeded by {{ "%.1f"|format(totals.protein - targets.protein) }} g
+                                    {% elif totals.protein == targets.protein %}
+                                        Target reached
+                                    {% else %}
+                                        {{ "%.1f"|format(targets.protein - totals.protein) }} g remaining
+                                    {% endif %}
+                                </small>
+                                <!-- Progress Bar for Protein -->
+                                {% set protein_percent = ((totals.protein / targets.protein) * 100) if targets.protein > 0 else 0 %}
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div class="progress-bar 
+                                        {% if protein_percent > 100 %}bg-danger
+                                        {% elif protein_percent == 100 %}bg-warning
+                                        {% else %}bg-success{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {% if protein_percent > 100 %}100{% else %}{{ protein_percent }}{% endif %}%;" 
+                                        aria-valuenow="{{ protein_percent }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="d-block text-end mt-1 
+                                    {% if protein_percent > 100 %}text-danger
+                                    {% elif protein_percent == 100 %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(protein_percent) }}%
+                                    {% if protein_percent > 100 %} (Overconsumption){% endif %}
+                                </small>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Fat</th>
+                            <td>
+                                {{ "%.1f"|format(totals.fat|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.fat|default(0)|float) }}</span> g
+                                <br>
+                                <small class="
+                                    {% if totals.fat > targets.fat %}text-danger
+                                    {% elif totals.fat == targets.fat %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {% if totals.fat > targets.fat %}
+                                        Exceeded by {{ "%.1f"|format(totals.fat - targets.fat) }} g
+                                    {% elif totals.fat == targets.fat %}
+                                        Target reached
+                                    {% else %}
+                                        {{ "%.1f"|format(targets.fat - totals.fat) }} g remaining
+                                    {% endif %}
+                                </small>
+                                <!-- Progress Bar for Fat -->
+                                {% set fat_percent = ((totals.fat / targets.fat) * 100) if targets.fat > 0 else 0 %}
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div class="progress-bar 
+                                        {% if fat_percent > 100 %}bg-danger
+                                        {% elif fat_percent == 100 %}bg-warning
+                                        {% else %}bg-success{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {% if fat_percent > 100 %}100{% else %}{{ fat_percent }}{% endif %}%;" 
+                                        aria-valuenow="{{ fat_percent }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="d-block text-end mt-1 
+                                    {% if fat_percent > 100 %}text-danger
+                                    {% elif fat_percent == 100 %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(fat_percent) }}%
+                                    {% if fat_percent > 100 %} (Overconsumption){% endif %}
+                                </small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Carbs</th>
+                            <td>
+                                {{ "%.1f"|format(totals.carbs|default(0)|float) }} / <span class="text-muted">{{ "%.1f"|format(targets.carbs|default(0)|float) }}</span> g
+                                <br>
+                                <small class="
+                                    {% if totals.carbs > targets.carbs %}text-danger
+                                    {% elif totals.carbs == targets.carbs %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {% if totals.carbs > targets.carbs %}
+                                        Exceeded by {{ "%.1f"|format(totals.carbs - targets.carbs) }} g
+                                    {% elif totals.carbs == targets.carbs %}
+                                        Target reached
+                                    {% else %}
+                                        {{ "%.1f"|format(targets.carbs - totals.carbs) }} g remaining
+                                    {% endif %}
+                                </small>
+                                <!-- Progress Bar for Carbs -->
+                                {% set carbs_percent = ((totals.carbs / targets.carbs) * 100) if targets.carbs > 0 else 0 %}
+                                <div class="progress mt-2" style="height: 10px;">
+                                    <div class="progress-bar 
+                                        {% if carbs_percent > 100 %}bg-danger
+                                        {% elif carbs_percent == 100 %}bg-warning
+                                        {% else %}bg-success{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {% if carbs_percent > 100 %}100{% else %}{{ carbs_percent }}{% endif %}%;" 
+                                        aria-valuenow="{{ carbs_percent }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="d-block text-end mt-1 
+                                    {% if carbs_percent > 100 %}text-danger
+                                    {% elif carbs_percent == 100 %}text-warning
+                                    {% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(carbs_percent) }}%
+                                    {% if carbs_percent > 100 %} (Overconsumption){% endif %}
+                                </small>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Daily Energy Balance with equal column widths -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Daily Energy Balance/Step Count</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 25%">Calories Consumed</th>
+                                <th class="text-center" style="width: 25%">Calories Burned</th>
+                                <th class="text-center" style="width: 25%">Net Calories</th>
+                                <th class="text-center" style="width: 25%">Steps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">{{ "%.0f"|format(totals.calories|default(0)) }}</td>
+                                <td class="text-center">{{ calories_burned }}</td>
+                                <td class="text-center">{{ "%.0f"|format(totals.calories|default(0) - calories_burned) }}</td>
+                                <td class="text-center">
+                                    {% if step_count %}
+                                        {{ step_count }} 
+                                        <small class="text-muted">steps</small>
+                                    {% else %}
+                                        <span class="text-muted">0 steps</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Today's Supplements List -->
+            {% if supplements %}
+                <h5 class="mt-4 mb-3">Today's Supplements</h5>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" style="width: 25%">Calories Consumed</th>
-                                        <th class="text-center" style="width: 25%">Calories Burned</th>
-                                        <th class="text-center" style="width: 25%">Net Calories</th>
-                                        <th class="text-center" style="width: 25%">Steps</th>
+                                        <th style="width: 20%; font-size: 0.85rem;">Time</th>
+                                        <th style="font-size: 0.85rem;">Supplement</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for supplement in supplements %}
                                     <tr>
-                                        <td class="text-center">{{ "%.0f"|format(totals.calories|default(0)) }}</td>
-                                        <td class="text-center">{{ calories_burned }}</td>
-                                        <td class="text-center">{{ "%.0f"|format(totals.calories|default(0) - calories_burned) }}</td>
-                                        <td class="text-center">
-                                            {% if step_count %}
-                                                {{ step_count }} 
-                                                <small class="text-muted">steps</small>
-                                            {% else %}
-                                                <span class="text-muted">0 steps</span>
-                                            {% endif %}
-                                        </td>
+                                        <td>{{ supplement.created_at.strftime('%H:%M') }}</td>
+                                        <td>{{ supplement.supplement_name }}</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    <!-- Today's Supplements List -->
-                    {% if supplements %}
-                        <h5 class="mt-4 mb-3">Today's Supplements</h5>
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 20%; font-size: 0.85rem;">Time</th>
-                                                <th style="font-size: 0.85rem;">Supplement</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for supplement in supplements %}
-                                            <tr>
-                                                <td>{{ supplement.created_at.strftime('%H:%M') }}</td>
-                                                <td>{{ supplement.supplement_name }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <!-- Today's Meals List -->
-                    {% if meals %}
-                        <h5 class="mt-4 mb-3">Today's Meals</h5>
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 10%; font-size: 0.85rem;">Time</th>
-                                                <th style="width: 25%; font-size: 0.85rem;">Food</th>
-                                                <th style="width: 10%; font-size: 0.85rem;">Quantity</th>
-                                                <th style="width: 10%; font-size: 0.85rem;">Unit</th>
-                                                <th style="width: 11.25%; font-size: 0.85rem;">Calories</th>
-                                                <th style="width: 11.25%; font-size: 0.85rem;">Protein (g)</th>
-                                                <th style="width: 11.25%; font-size: 0.85rem;">Carbs (g)</th>
-                                                <th style="width: 11.25%; font-size: 0.85rem;">Fat (g)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for meal in meals %}
-                                            <tr>
-                                                <td>{{ meal.date_recorded.strftime('%H:%M') }}</td>
-                                                <td>{{ meal.food_name }}</td>
-                                                <td>{{ meal.quantity }}</td>
-                                                <td>{{ meal.unit }}</td>
-                                                <td>{{ "%.1f"|format(meal.calories|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(meal.protein|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(meal.carbs|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(meal.fat|default(0)) }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                        <tfoot class="table-light fw-bold">
-                                            <tr>
-                                                <td>Total:</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>{{ "%.1f"|format(totals.calories|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(totals.protein|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(totals.carbs|default(0)) }}</td>
-                                                <td>{{ "%.1f"|format(totals.fat|default(0)) }}</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info mt-4">
-                            No meals recorded today. 
-                            <a href="{{ url_for('meal.record_meal') }}" class="alert-link">Record your first meal</a>
-                        </div>
-                    {% endif %}
                 </div>
-            </div>
+            {% endif %}
+
+            <!-- Today's Meals List -->
+            {% if meals %}
+                <h5 class="mt-4 mb-3">Today's Meals</h5>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%; font-size: 0.85rem;">Time</th>
+                                        <th style="width: 25%; font-size: 0.85rem;">Food</th>
+                                        <th style="width: 10%; font-size: 0.85rem;">Quantity</th>
+                                        <th style="width: 10%; font-size: 0.85rem;">Unit</th>
+                                        <th style="width: 11.25%; font-size: 0.85rem;">Calories</th>
+                                        <th style="width: 11.25%; font-size: 0.85rem;">Protein (g)</th>
+                                        <th style="width: 11.25%; font-size: 0.85rem;">Carbs (g)</th>
+                                        <th style="width: 11.25%; font-size: 0.85rem;">Fat (g)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for meal in meals %}
+                                    <tr>
+                                        <td>{{ meal.date_recorded.strftime('%H:%M') }}</td>
+                                        <td>{{ meal.food_name }}</td>
+                                        <td>{{ meal.quantity }}</td>
+                                        <td>{{ meal.unit }}</td>
+                                        <td>{{ "%.1f"|format(meal.calories|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(meal.protein|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(meal.carbs|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(meal.fat|default(0)) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="table-light fw-bold">
+                                    <tr>
+                                        <td>Total:</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ "%.1f"|format(totals.calories|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(totals.protein|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(totals.carbs|default(0)) }}</td>
+                                        <td>{{ "%.1f"|format(totals.fat|default(0)) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info mt-4">
+                    No meals recorded today. 
+                    <a href="{{ url_for('meal.record_meal') }}" class="alert-link">Record your first meal</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+<!-- Remove the closing divs from the old layout -->
+
 {% endblock %}

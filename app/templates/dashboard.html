@@ -1,12 +1,272 @@
 {% extends "base.html" %}
 
+{% block title %}Dashboard - My Health Tracker{% endblock %}
+
 {% block content %}
-<div class="d-flex">
-    {% include 'shared/_sidebar.html' %}
+<div class="content-header">
+    <h2>Welcome, {{ current_user.username |title}}!</h2>
+    <p class="text-muted">Track your nutrition journey with AI-powered insights.</p>
+</div>
+
+<div class="dashboard-content">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-utensils fa-2x text-primary mb-3"></i>
+                    <h5 class="card-title">Record Meals</h5>
+                    <p class="card-text">Log your meals with AI assistance</p>
+                    <a href="{{ url_for('meal.record_meal') }}" class="btn btn-primary">Add Meal</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                    <h5 class="card-title">View Progress</h5>
+                    <p class="card-text">Track your nutrition goals</p>
+                    <a href="{{ url_for('meal.today_consumption') }}" class="btn btn-success">View Meals</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-target fa-2x text-warning mb-3"></i>
+                    <h5 class="card-title">Daily Targets</h5>
+                    <p class="card-text">Set and track your daily goals</p>
+                    <a href="{{ url_for('daily_target.daily_budget') }}" class="btn btn-warning">Set Goals</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-dumbbell fa-2x text-info mb-3"></i>
+                    <h5 class="card-title">Track Calories Burned</h5>
+                    <p class="card-text">Log your exercise activities</p>
+                    <a href="{{ url_for('exercise.track_calories_burned') }}" class="btn btn-info">Track Exercise</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-pills fa-2x text-secondary mb-3"></i>
+                    <h5 class="card-title">Supplements</h5>
+                    <p class="card-text">Log your supplements</p>
+                    <a href="{{ url_for('supplement.track_supplements') }}" class="btn btn-secondary">Add Supplement</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-2x text-dark mb-3"></i>
+                    <h5 class="card-title">Today's Summary</h5>
+                    <p class="card-text">View today's nutrition</p>
+                    <a href="{{ url_for('meal.today_consumption') }}" class="btn btn-secondary">View Summary</a>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <!-- Main content area -->
-    <div class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 20px;">
-        <h2>Welcome, {{ current_user.username |title}}!</h2>
+    <!-- Quick Stats Row -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-primary">0</div>
+                                <div class="stat-label">Meals Today</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-success">0</div>
+                                <div class="stat-label">Calories Today</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-warning">0</div>
+                                <div class="stat-label">Calories Burned</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-number text-info">1</div>
+                                <div class="stat-label">Days Active</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-plus-circle fa-3x mb-3 text-light"></i>
+                        <p>No recent activity yet.</p>
+                        <p class="small">Start by <a href="{{ url_for('meal.record_meal') }}">recording your first meal</a>!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center py-4">
+                    <h5 class="mb-3"><i class="fas fa-rocket text-primary"></i> Quick Actions</h5>
+                    <div class="btn-group" role="group" aria-label="Quick actions">
+                        <a href="{{ url_for('meal.record_meal') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus"></i> Add Meal
+                        </a>
+                        <a href="{{ url_for('meal.today_consumption') }}" class="btn btn-outline-success">
+                            <i class="fas fa-chart-line"></i> View Today
+                        </a>
+                        <a href="{{ url_for('daily_target.daily_budget') }}" class="btn btn-outline-warning">
+                            <i class="fas fa-target"></i> Set Goals
+                        </a>
+                        <a href="{{ url_for('exercise.track_calories_burned') }}" class="btn btn-outline-info">
+                            <i class="fas fa-dumbbell"></i> Track Exercise
+                        </a>
+                        <a href="{{ url_for('supplement.track_supplements') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-pills"></i> Supplements
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showTodaySummary() {
+    // Redirect to today's consumption page instead of showing alert
+    window.location.href = "{{ url_for('meal.today_consumption') }}";
+}
+
+function showComingSoon(feature) {
+    alert(`${feature} feature is coming soon!\n\nFor now, focus on:\n• Recording your meals\n• Setting daily nutrition goals\n• Tracking calories burned through exercise`);
+}
+
+// Add some interactivity to the dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth hover effects
+    const cards = document.querySelectorAll('.dashboard-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Add click animation to buttons
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+});
+</script>
+
+<style>
+/* Add some custom styles for better UX */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.dashboard-card {
+    transition: all 0.3s ease;
+}
+
+.stat-item {
+    padding: 1rem 0;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.quick-actions .btn-group .btn {
+    margin: 0 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin: 0.25rem 0;
+        width: 100%;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+</style>
 {% endblock %}
